@@ -5,7 +5,7 @@ from db.server import Base
 
 class TVMovie(Base):
     __tablename__ = 'TVMovie'
-    MediaID = Column(Integer,primary_key=True,autoincrement=True)
+    MediaID = Column(Integer,primary_key=True)
     # 40 = max length of string
     Title = Column(String(40))
     Genre = Column(String(40))
@@ -13,11 +13,11 @@ class TVMovie(Base):
     Type = Column(String(40))
 
     # create relationship with user table. assoc table name = Watching
-    User = relationship('User', secondary = 'Watching', back_populates = 'TVMovie')
+    watchingUser = relationship('User', secondary = 'Watching', back_populates = 'TVMovie')
     # create relationship with user table. assoc table name = Watched
-    User = relationship('User', secondary = 'Watched', back_populates = 'TVMovie')
+    watchedUser = relationship('User', secondary = 'Watched', back_populates = 'TVMovie')
     # create relationship with user table. assoc table name = Watchlist
-    User = relationship('User', secondary = 'Watchlist', back_populates = 'TVMovie')
+    watchlistUser = relationship('User', secondary = 'Watchlist', back_populates = 'TVMovie')
     # create relationship with post table
     Post = relationship('Post', back_populates = 'TVMovie')
 

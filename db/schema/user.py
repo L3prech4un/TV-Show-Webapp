@@ -12,20 +12,19 @@ class User(Base):
     UName = Column(String(40))
     PWord = Column(String(40))
     Email = Column(String(40))
-    DOB = Column(String(40))
 
     # create relationship with post table. assoc table name = Creates
     Post = relationship('Post', secondary = 'Creates', back_populates = 'User')
     # create relationship with comment table. assoc table name = Makes
-    Post = relationship('Comment', secondary = 'Makes', back_populates = 'User')
+    Comment = relationship('Comment', secondary = 'Makes', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watched
-    Post = relationship('TVMovie', secondary = 'Watched', back_populates = 'User')
+    TVMovieWatched = relationship('TVMovie', secondary = 'Watched', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watching
-    Post = relationship('TVMovie', secondary = 'Watching', back_populates = 'User')
+    TVMovieWatching= relationship('TVMovie', secondary = 'Watching', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watchlist
-    Post = relationship('TVMovie', secondary = 'Watchlist', back_populates = 'User')
+    TVMovieWatchlist = relationship('TVMovie', secondary = 'Watchlist', back_populates = 'User')
     # create relationship with User table. assoc table name = follows
-    Post = relationship('User', secondary = 'Follows', back_populates = 'User')
+    Follows = relationship('User', secondary = 'Follows', back_populates = 'User')
 
     def __init__(self, name):
         self.FName = self.FName
@@ -33,7 +32,6 @@ class User(Base):
         self.UName = self.UName
         self.PWord = self.PWord
         self.Email = self.Email
-        self.DOB = self.DOB
 
     def __repr__(self):
         return f"""
@@ -41,8 +39,7 @@ class User(Base):
              LAST NAME: {self.LName},
              USER NAME: {self.UName},
              PASSWORD: {self.PWord},
-             EMAIL: {self.Email},
-             DATE OF BIRTH: {self.DOB}
+             EMAIL: {self.Email}
         """
     
     def __repr__(self):
