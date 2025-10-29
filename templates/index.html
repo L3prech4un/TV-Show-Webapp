@@ -1,23 +1,54 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Lab 6</title>
-        <link rel="stylesheet" href="/static/style.css">
-    </head>
-    <body>
-        <h1>Welcome to Lab 6!</h1>
-        <div id="index">
-            <a href="/signup">
-                <button type="button">Sign up!</button>
-            </a>
+  <head>
+    <title>TV Show WebApp</title>
+    <link rel="stylesheet" href="/static/indexStyle.css">
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+       <img src="/static/images/Logo.png" alt="Streamline Logo" class="logo-img">
+        <span>Streamline</span>
+      </div>
 
-            <a href="/login">
-                <button type="button">Log In!</button>
-            </a>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/feed">My Feed</a></li>
+          <li><a href="/login">Log In</a></li>
+          <li><a href="/signup">Sign Up</a></li>
+        </ul>
 
-            <a href="/users">
-                <button type="button">Users!</button>
-            </a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search shows..." />
+          <button>Search</button>
         </div>
-    </body>
+      </nav>
+
+      <div class="header-container" id="home">
+        <div id="header-img">
+          <img src="images/tv-logo.png" alt="TV App Logo" width="150" height="150">
+        </div>
+
+        <div class="header-item">
+          <h1>Welcome to Streamline</h1>
+          <p>Your ultimate destination for TV show enthusiasts! Discover, track, and share your favorite shows all in one place.</p>
+        </div>
+
+        <div class="header-item">
+          <button class="header-button" type="button">Log In</button>
+          <button class="header-button" type="button">Sign Up</button> 
+        </div> 
+      </div>
+
+      <section class="hero">
+        <div class="hero-text">
+          <h1>Discover Your Favorite TV Shows</h1>
+          <p>Browse trending series, explore cast details, and stay updated.</p>
+          <button class="explore-btn">Explore Now</button>
+        </div>
+      </section>
+    </header>
+  </body>
 </html>
