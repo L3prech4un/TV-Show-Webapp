@@ -1,0 +1,139 @@
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: "Times New Roman", sans-serif;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1c1c1c;
+  padding: 15px 40px;
+  border-bottom: 2px solid #e50914;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #e50914;
+}
+
+.logo-img {
+  width: 50px;
+  height: auto;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 500;
+}
+
+nav ul li a.active {
+  color: #e50914;
+  text-decoration: underline;
+}
+
+/* Profile Hero */
+.profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px 30px;
+  text-align: center;
+  background: linear-gradient(to bottom, #000, #1c1c1c);
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #e50914;
+  margin-bottom: 20px;
+}
+
+.profile-hero h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.profile-hero p {
+  color: #ccc;
+}
+
+/* Watchlist Sections */
+.profile-sections {
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.watchlist-section {
+  margin-bottom: 40px;
+}
+
+.watchlist-section h2 {
+  color: #e50914;
+  margin-bottom: 20px;
+}
+
+.show-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.show {
+  background-color: #1c1c1c;
+  padding: 15px;
+  border-radius: 8px;
+  min-width: 120px;
+  text-align: center;
+  flex: 1 1 120px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.show:hover {
+  transform: scale(1.05);
+  background-color: #2a2a2a;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #1c1c1c;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .show-grid {
+    justify-content: center;
+  }
+}

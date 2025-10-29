@@ -1,73 +1,219 @@
-THE CSS: 
-/* Logo section */
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Times New Roman", sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Header styling */
+header {
+  width: 100%;
+}
+
+/* Navbar: logo, nav links, search bar */
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1c1c1c;
+  padding: 15px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 2px solid #e50914;
+}
+
+/* Logo */
 .logo {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #ffffff;
 }
- 
+
 .logo-img {
   width: 50px;
   height: auto;
 }
- 
-/* Header styling */
-header {
-  background-color: #1c1c1c;
-  color: #fff;
-  padding: 15px 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
- 
-/* Nav styling */
+
+/* Nav links */
 nav ul {
-  list-style: none;
   display: flex;
+  list-style: none;
   gap: 20px;
-  padding: 0;
 }
- 
-nav a {
-  color: #fff;
+
+nav ul li a {
   text-decoration: none;
+  color: #fff;
   font-weight: 500;
+  transition: color 0.3s, transform 0.2s;
 }
- 
-nav a:hover {
-  text-decoration: underline;
+
+nav ul li a:hover {
+  color: #ffcc00;
+  transform: scale(1.05);
 }
- 
+
 /* Search bar */
 .search-bar {
-  margin-top: 10px;
   display: flex;
   align-items: center;
   gap: 5px;
+  margin-left: 20px;
 }
- 
+
 .search-bar input {
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 4px;
   border: none;
+  outline: none;
   width: 200px;
+  background-color: #2a2a2a;
+  color: #fff;
 }
- 
+
+.search-bar input::placeholder {
+  color: #aaa;
+}
+
 .search-bar button {
-  padding: 8px 12px;
+  padding: 8px 14px;
+  border-radius: 4px;
   border: none;
   background-color: #e50914;
-  color: white;
-  border-radius: 4px;
+  color: #fff;
+  font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s;
 }
- 
+
 .search-bar button:hover {
   background-color: #b00610;
 }
- 
- 
+
+/* Header container */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(to bottom, #000, #1c1c1c);
+}
+
+/* Header items */
+.header-item h1 {
+  font-size: 2.5em;
+  margin-bottom: 15px;
+}
+
+.header-item p {
+  font-size: 1.1em;
+  color: #ccc;
+  max-width: 700px;
+  margin: 0 auto 25px;
+}
+
+/* Buttons */
+.header-button {
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  margin: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.header-button:hover {
+  background-color: #b00610;
+}
+
+/* Hero section */
+.hero {
+  background: url('/static/images/banner-bg.jpg') center/cover no-repeat;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.hero-text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+  max-width: 700px;
+}
+
+.hero-text h1 {
+  font-size: 2.5em;
+  margin-bottom: 15px;
+}
+
+.hero-text p {
+  font-size: 1.1em;
+  margin-bottom: 25px;
+}
+
+.feed-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 6px;
+  background-color: #b00610;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  transition: background 0.3s;
+}
+
+.feed-btn:hover {
+  background-color: #e19689;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  header nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .search-bar {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .header-item h1 {
+    font-size: 2em;
+  }
+
+  .hero {
+    height: 300px;
+  }
+
+  .hero-text h1 {
+    font-size: 2em;
+  }
+}
