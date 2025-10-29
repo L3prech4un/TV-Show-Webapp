@@ -1,30 +1,31 @@
 """user.py: create a table named user in the TV-SHOW-WEBAPP database"""
-from db.server import db
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from db.server import Base
 
-class User(db.Model):
+class User(Base):
     __tablename__ = 'User'
-    # db.<data type> is the data type of the value in the column
-    UserID = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    UserID = Column(Integer,primary_key=True,autoincrement=True)
     # 40 = max length of string
-    FName = db.Column(db.String(40))
-    LName = db.Column(db.String(40))
-    UName = db.Column(db.String(40))
-    PWord = db.Column(db.String(40))
-    Email = db.Column(db.String(40))
-    DOB = db.Column(db.String(40))
+    FName = Column(String(40))
+    LName = Column(String(40))
+    UName = Column(String(40))
+    PWord = Column(String(40))
+    Email = Column(String(40))
+    DOB = Column(String(40))
 
     # create relationship with post table. assoc table name = Creates
-    Post = db.relationship('Post', secondary = 'Creates', back_populates = 'User')
+    Post = relationship('Post', secondary = 'Creates', back_populates = 'User')
     # create relationship with comment table. assoc table name = Makes
-    Post = db.relationship('Comment', secondary = 'Makes', back_populates = 'User')
+    Post = relationship('Comment', secondary = 'Makes', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watched
-    Post = db.relationship('TVMovie', secondary = 'Watched', back_populates = 'User')
+    Post = relationship('TVMovie', secondary = 'Watched', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watching
-    Post = db.relationship('TVMovie', secondary = 'Watching', back_populates = 'User')
+    Post = relationship('TVMovie', secondary = 'Watching', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watchlist
-    Post = db.relationship('TVMovie', secondary = 'Watchlist', back_populates = 'User')
+    Post = relationship('TVMovie', secondary = 'Watchlist', back_populates = 'User')
     # create relationship with User table. assoc table name = follows
-    Post = db.relationship('User', secondary = 'Follows', back_populates = 'User')
+    Post = relationship('User', secondary = 'Follows', back_populates = 'User')
 
     def __init__(self, name):
         self.FName = self.FName

@@ -1,19 +1,20 @@
 """comment.py: create a table named comment in the TV-SHOW-WEBAPP database"""
-from db.server import db
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from db.server import Base
 
-class Comment(db.Model):
+class Comment(Base):
     __tablename__ = 'Comment'
-    # db.<data type> is the data type of the value in the column
-    CommentID = db.Column(db.Integer,primary_key=True,autoincrement=True)
-    PostID = db.Column(db.Integer,db.ForeignKey('Post.PostID'))
+    CommentID = Column(Integer,primary_key=True,autoincrement=True)
+    PostID = Column(Integer,ForeignKey('Post.PostID'))
     # 40 = max length of string
-    Date = db.Column(db.String(40))
-    Content = db.Column(db.String(40))
+    Date = Column(String(40))
+    Content = Column(String(40))
 
     # create relationship with user table. assoc table name = makes
-    User = db.relationship('User', secondary = 'Makes', back_populates = 'Comment')
+    User = relationship('User', secondary = 'Makes', back_populates = 'Comment')
     # create relationship with post table
-    Post = db.relationship('Post', back_populates = 'Comment')
+    Post = relationship('Post', back_populates = 'Comment')
 
     def __init__(self, name):
         self.Date = self.Date

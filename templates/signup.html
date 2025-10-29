@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Signup</title>
+        <link rel="stylesheet" href="/static/signupStyle.css">
+    </head>
+    <body>
+        <navbar>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/">
+                        <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </navbar>
+
+        <div class="signup-container">
+            <div class="signup-box">
+                <h2>Signup</h2>
+                <form type="POST">
+                    <input type="text" name="First Name" required placeholder="First Name">
+                    <input type="text" name="Last Name" required placeholder="Last Name">
+                    <input type="uname" name="Username" required placeholder="Username">
+                    <input type="email" name="Email" required placeholder="Email">
+                    <input type="password" name="Password" required placeholder="Password">
+                    <input type="submit" class="btn-primary">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

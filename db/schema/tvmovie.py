@@ -1,24 +1,25 @@
 """tvmovie.py: create a table named tvmovie in the TV-SHOW-WEBAPP database"""
-from db.server import db
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from db.server import Base
 
-class TVMovie(db.Model):
+class TVMovie(Base):
     __tablename__ = 'TVMovie'
-    # db.<data type> is the data type of the value in the column
-    MediaID = db.Column(db.Integer,primary_key=True,autoincrement=True)
+    MediaID = Column(Integer,primary_key=True,autoincrement=True)
     # 40 = max length of string
-    Title = db.Column(db.String(40))
-    Genre = db.Column(db.String(40))
-    Year = db.Column(db.String(40))
-    Type = db.Column(db.String(40))
+    Title = Column(String(40))
+    Genre = Column(String(40))
+    Year = Column(String(40))
+    Type = Column(String(40))
 
     # create relationship with user table. assoc table name = Watching
-    User = db.relationship('User', secondary = 'Watching', back_populates = 'TVMovie')
+    User = relationship('User', secondary = 'Watching', back_populates = 'TVMovie')
     # create relationship with user table. assoc table name = Watched
-    User = db.relationship('User', secondary = 'Watched', back_populates = 'TVMovie')
+    User = relationship('User', secondary = 'Watched', back_populates = 'TVMovie')
     # create relationship with user table. assoc table name = Watchlist
-    User = db.relationship('User', secondary = 'Watchlist', back_populates = 'TVMovie')
+    User = relationship('User', secondary = 'Watchlist', back_populates = 'TVMovie')
     # create relationship with post table
-    Post = db.relationship('Post', back_populates = 'TVMovie')
+    Post = relationship('Post', back_populates = 'TVMovie')
 
     def __init__(self, name):
         self.Title = self.Title
