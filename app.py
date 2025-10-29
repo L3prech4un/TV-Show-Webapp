@@ -90,6 +90,18 @@ def create_app():
         """Success page: displayed upon successful login"""
 
         return render_template('success.html')
+    
+    @app.route('/about')
+    def about():
+        """About page: About us web page"""
+
+        return render_template('about.html')
+    
+    @app.route('/profile')
+    def profile():
+        """My Profile: User Profile Page"""
+
+        return render_template('profile.html')
 
     return app
 
