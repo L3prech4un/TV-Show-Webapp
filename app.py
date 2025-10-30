@@ -110,7 +110,12 @@ def create_app():
     def about():
         """About page: Displays the about us section of the website"""
         return render_template('about.html')
-
+    
+    @app.route('/my_feed')
+    def my_feed():
+        """User feed page: Shows posts from following or random"""
+        #TODO: Implement cookies to 
+        return render_template('feed.html')
 
     return app
 
