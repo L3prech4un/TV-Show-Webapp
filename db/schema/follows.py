@@ -4,10 +4,10 @@ from db.server import Base
 
 # join table between user and comment
 Follows = Table(
-  'Follows',
+  'follows',
   Base.metadata,
   # grab the UserID primary key and make it a foreign key
-  Column('UserID', Integer, ForeignKey('User.UserID')),
+  Column('UserID', Integer, ForeignKey('user.UserID')),
   # grab the UserID primary key and make it a foreign key
-  Column('FollowerID', Integer, ForeignKey('User.UserID'))
+  Column('FollowerID', Integer, ForeignKey('user.UserID'))
 )

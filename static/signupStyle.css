@@ -1,11 +1,8 @@
-:root {
-    /* Color Variables */
+:root { 
     --clr-primary: #6aeeb5;
     --clr-primary-hover: #29e6a7;
     --clr-gray100: #f0f7f8;
     --clr-gray200: #cfd8dc;
-
-    /* border radius */
     --radius: 0.2rem;   
 }
 
@@ -15,13 +12,11 @@
     box-sizing: border-box;
 }
 
-
 body {
     font-family: 'Montserrat', sans-serif;
     background: var(--clr-gray100);
 }
 
-/* Navigation Bar Styling */
 .nav-list {
     background-color: white;
     box-shadow: 0px 0px 10px var(--clr-gray200);
@@ -56,14 +51,11 @@ body {
     transition: color 0.3s ease;
 }
 
-
-/* Logo Image Styling */
 .MiniLogo {
     width: 50px;
     height: auto;
 }
 
-/* signup Container Styling */
 .signup-container {
     background-color: white;
     padding: 1rem;
@@ -77,13 +69,13 @@ body {
 .signup-container h2 {
     border-bottom-style: solid;
     padding-bottom: 0.5rem;
-    border-color: var(--clr-primary)
+    border-color: var(--clr-primary);
 }
 
 .signup-container form {
     display: flex;
     flex-direction: column;
-    margin-top: 20px
+    margin-top: 20px;
 }
 
 .signup-container input {
@@ -115,4 +107,10 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background: var(--clr-primary-hover);
     transition: background 0.3s ease;
+}
+
+.feed-container {
+    max-width: 800px;
+    margin: 5rem auto;
+    padding: 1rem;
 }

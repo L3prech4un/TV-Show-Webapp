@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MyFeed</title>
+    <link rel="stylesheet" href="/static/feedStyle.css">
+</head>
+<body>
+    <navbar>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="/">
+                    <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/my_feed" class="active">My Feed</a>
+            </li>
+            <li class="nav-item">
+                <a href="/my_profile">My Profile</a>
+            </li>
+            <li class="nav-item">
+                <a href="/about">About</a>
+            </li>
+            <li class="nav-item">
+                <a href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a href="/signup">Sign Up</a>
+            </li>
+        </ul>
+    </navbar>
+
+    <div class="feed-container">
+        <div class="feed-box">
+            <h2>My Feed</h2>
+        </div>
+
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post">
+                <h2>{{ post.media_title }} | {{ post.title }}</h2>
+                <div class="post-meta">
+                    <span class="username">Posted by {{ post.username }}</span>
+                    <span class="date">{{ post.date }}</span>
+                </div>
+
+                <p class="content">{{ post.content }}</p>
+
+                {% if post.userid|string == session.get('user_id')|string %}
+                <form action="{{ url_for('delete_post', post_id=post.postid) }}" method="POST" class="delete-form">
+                    <button type="submit" class="submit-comment">Delete Post</button>
+                </form>
+                {% endif %}
+
+                <div class="comments">
+                    {% set comments = getPostComments(post.postid) %}
+                    {% if comments %}
+                        {% for comment in comments %}
+                        <div class="comment">
+                            <p><strong>{{ comment.username }}</strong>: {{ comment.content }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-comments">No comments yet.</p>
+                    {% endif %}
+
+                    <form action="{{ url_for('add_comment', post_id=post.postid) }}" method="POST" class="comment-form">
+                        <input type="text" name="content" placeholder="Write a comment..." required>
+                        <button type="submit" class="submit-comment">Add Comment</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="post">
+                <p class="no-comments">No posts to display.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('create_post') }}" class="floating-create-button">Create Post</a>
+</body>
+</html>

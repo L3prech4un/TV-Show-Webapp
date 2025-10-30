@@ -1,93 +1,134 @@
-"""dummy_data.py: populate the TV-SHOW-WEBAPP database with sample data"""
+"""dummydata.py: populate all tables in TV-SHOW-WEBAPP database respecting feed visibility"""
+
 from db.server import get_session
 from db.schema.user import User
 from db.schema.post import Post
 from db.schema.comment import Comment
 from db.schema.tvmovie import TVMovie
+from db.schema.creates import Creates
+from db.schema.follows import Follows
+from db.schema.makes import Makes
 from db.schema.watched import Watched
 from db.schema.watching import Watching
 from db.schema.watchlist import Watchlist
-from db.schema.creates import Creates
-from db.schema.makes import Makes
-from db.schema.follows import Follows
 
-from sqlalchemy import insert
-
-def create_dummy_data():
+def create_dummy_data():    
     session = get_session()
+    try:
+        # --- Create Users ---
+        users = [
+            User(FName="Alice", LName="Smith", UName="alice123", PWord="pass123", Email="alice@example.com"),
+            User(FName="Bob", LName="Jones", UName="bobby", PWord="secret", Email="bob@example.com"),
+            User(FName="Charlie", LName="Brown", UName="charlieB", PWord="charlie123", Email="charlie@example.com"),
+            User(FName="Diana", LName="Prince", UName="dianaP", PWord="wonder", Email="diana@example.com"),
+            User(FName="Eve", LName="Adams", UName="eveA", PWord="evepass", Email="eve@example.com")
+        ]
+        session.add_all(users)
+        session.flush()  # Assigns UserIDs
 
-    # --- USERS ---
-    user1 = User(FName="Alice", LName="Smith", UName="alice123", PWord="pass123", Email="alice@example.com")
-    user2 = User(FName="Bob", LName="Jones", UName="bobby", PWord="secret", Email="bob@example.com")
-    user3 = User(FName="Charlie", LName="Brown", UName="charlieB", PWord="choco", Email="charlie@example.com")
+        # --- Create TV Shows and Movies ---
+        shows = [
+            TVMovie(Title="Stranger Things", Genre="Sci-Fi", Year="2016", Type="TV"),
+            TVMovie(Title="The Matrix", Genre="Action", Year="1999", Type="Movie"),
+            TVMovie(Title="Breaking Bad", Genre="Drama", Year="2008", Type="TV"),
+            TVMovie(Title="The Witcher", Genre="Fantasy", Year="2019", Type="TV"),
+            TVMovie(Title="Inception", Genre="Sci-Fi", Year="2010", Type="Movie")
+        ]
+        session.add_all(shows)
+        session.flush()  # Assigns MediaIDs
 
-    session.add_all([user1, user2, user3])
-    session.commit()
+        # --- Create Posts ---
+        posts = [
+            Post(MediaID=shows[0].MediaID, Title="Love Stranger Things!", Date="2025-10-30", Content="Best show ever!"),  # Alice
+            Post(MediaID=shows[1].MediaID, Title="Matrix Review", Date="2025-10-29", Content="Classic movie"),            # Bob
+            Post(MediaID=shows[2].MediaID, Title="BB Thoughts", Date="2025-10-28", Content="Just finished Breaking Bad"),  # Charlie
+            Post(MediaID=shows[3].MediaID, Title="Geralt Forever!", Date="2025-10-27", Content="The Witcher rocks!"),     # Diana
+            Post(MediaID=shows[4].MediaID, Title="Mind Blown!", Date="2025-10-26", Content="Inception is a masterpiece!") # Eve
+        ]
+        session.add_all(posts)
+        session.flush()  # Assigns PostIDs
 
-    # --- TV SHOWS / MOVIES ---
-    movie1 = TVMovie(Title="Breaking Bad", Genre="Drama", Year="2008", Type="TV Show")
-    movie2 = TVMovie(Title="Inception", Genre="Sci-Fi", Year="2010", Type="Movie")
-    movie3 = TVMovie(Title="Friends", Genre="Comedy", Year="1994", Type="TV Show")
+        # --- Create Follows Relationships ---
+        follows_data = [
+            {"UserID": users[0].UserID, "FollowerID": users[1].UserID},  # Alice follows Bob
+            {"UserID": users[1].UserID, "FollowerID": users[2].UserID},  # Bob follows Charlie
+            {"UserID": users[2].UserID, "FollowerID": users[0].UserID},  # Charlie follows Alice
+            {"UserID": users[3].UserID, "FollowerID": users[4].UserID},  # Diana follows Eve
+            {"UserID": users[4].UserID, "FollowerID": users[3].UserID},  # Eve follows Diana
+        ]
+        session.execute(Follows.insert(), follows_data)
 
-    session.add_all([movie1, movie2, movie3])
-    session.commit()
+        # --- Link Users to Posts (Creates) ---
+        creates_data = [
+            {"UserID": users[0].UserID, "PostID": posts[0].PostID},
+            {"UserID": users[1].UserID, "PostID": posts[1].PostID},
+            {"UserID": users[2].UserID, "PostID": posts[2].PostID},
+            {"UserID": users[3].UserID, "PostID": posts[3].PostID},
+            {"UserID": users[4].UserID, "PostID": posts[4].PostID},
+        ]
+        session.execute(Creates.insert(), creates_data)
 
-    # --- POSTS ---
-    post1 = Post(Title="Amazing Episode!", Date="2025-10-01", Content="Loved the ending!", MediaID=movie1.MediaID)
-    post2 = Post(Title="Mind-bending Movie", Date="2025-10-05", Content="Inception blew my mind!", MediaID=movie2.MediaID)
-    post3 = Post(Title="Classic Show", Date="2025-10-10", Content="Friends never gets old.", MediaID=movie3.MediaID)
+        # --- Create Comments (respect visibility rules) ---
+        comments = [
+            Comment(PostID=posts[0].PostID, Content="Totally agree!"),   # Alice's post
+            Comment(PostID=posts[1].PostID, Content="Need to rewatch"),  # Bob's post
+            Comment(PostID=posts[2].PostID, Content="Best ending ever"), # Charlie's post
+            Comment(PostID=posts[3].PostID, Content="Geralt forever!"),  # Diana's post
+            Comment(PostID=posts[4].PostID, Content="Mind blown!")       # Eve's post
+        ]
+        session.add_all(comments)
+        session.flush()  # Assign CommentIDs
 
-    session.add_all([post1, post2, post3])
-    session.commit()
+        # --- Link Users to Comments (Makes) respecting visibility ---
+        makes_data = [
+            {"UserID": users[1].UserID, "CommentID": comments[0].CommentID},  # Bob can comment on Alice
+            {"UserID": users[2].UserID, "CommentID": comments[1].CommentID},  # Charlie can comment on Bob
+            {"UserID": users[0].UserID, "CommentID": comments[2].CommentID},  # Alice can comment on Charlie
+            {"UserID": users[4].UserID, "CommentID": comments[3].CommentID},  # Eve can comment on Diana
+            {"UserID": users[3].UserID, "CommentID": comments[4].CommentID}   # Diana can comment on Eve
+        ]
+        session.execute(Makes.insert(), makes_data)
 
-    # --- COMMENTS ---
-    comment1 = Comment(PostID=post1.PostID, Date="2025-10-02", Content="I agree, best episode yet!")
-    comment2 = Comment(PostID=post2.PostID, Date="2025-10-06", Content="The ending confused me.")
-    comment3 = Comment(PostID=post3.PostID, Date="2025-10-11", Content="Still watching reruns!")
+        # --- Add Shows to Watchlist ---
+        watchlist_data = [
+            {"UserID": users[0].UserID, "MediaID": shows[2].MediaID},
+            {"UserID": users[1].UserID, "MediaID": shows[0].MediaID},
+            {"UserID": users[2].UserID, "MediaID": shows[1].MediaID},
+            {"UserID": users[3].UserID, "MediaID": shows[4].MediaID},
+            {"UserID": users[4].UserID, "MediaID": shows[3].MediaID},
+        ]
+        session.execute(Watchlist.insert(), watchlist_data)
 
-    session.add_all([comment1, comment2, comment3])
-    session.commit()
+        # --- Add Shows to Currently Watching ---
+        watching_data = [
+            {"UserID": users[0].UserID, "MediaID": shows[0].MediaID},
+            {"UserID": users[1].UserID, "MediaID": shows[1].MediaID},
+            {"UserID": users[2].UserID, "MediaID": shows[2].MediaID},
+            {"UserID": users[3].UserID, "MediaID": shows[3].MediaID},
+            {"UserID": users[4].UserID, "MediaID": shows[4].MediaID},
+        ]
+        session.execute(Watching.insert(), watching_data)
 
-    # --- ASSOCIATIONS ---
-    # Creates (user -> post)
-    session.execute(insert(Creates).values([
-        {"UserID": user1.UserID, "PostID": post1.PostID},
-        {"UserID": user2.UserID, "PostID": post2.PostID},
-        {"UserID": user3.UserID, "PostID": post3.PostID},
-    ]))
+        # --- Add Shows to Watched List ---
+        watched_data = [
+            {"UserID": users[0].UserID, "MediaID": shows[1].MediaID},
+            {"UserID": users[1].UserID, "MediaID": shows[2].MediaID},
+            {"UserID": users[2].UserID, "MediaID": shows[0].MediaID},
+            {"UserID": users[3].UserID, "MediaID": shows[4].MediaID},
+            {"UserID": users[4].UserID, "MediaID": shows[3].MediaID},
+        ]
+        session.execute(Watched.insert(), watched_data)
 
-    # Makes (user -> comment)
-    session.execute(insert(Makes).values([
-        {"UserID": user2.UserID, "CommentID": comment1.CommentID},
-        {"UserID": user3.UserID, "CommentID": comment2.CommentID},
-        {"UserID": user1.UserID, "CommentID": comment3.CommentID},
-    ]))
+        session.commit()
+        print("Successfully inserted dummy data into all tables with feed visibility enforced!")
 
-    # Follows (user -> user)
-    session.execute(insert(Follows).values([
-        {"UserID": user1.UserID, "FollowerID": user2.UserID},
-        {"UserID": user1.UserID, "FollowerID": user3.UserID},
-        {"UserID": user2.UserID, "FollowerID": user3.UserID},
-    ]))
+    except Exception as e:
+        session.rollback()
+        print("Error inserting dummy data:", e)
+        raise
+    finally:
+        session.close()
 
-    # Watched / Watching / Watchlist
-    session.execute(insert(Watched).values([
-        {"UserID": user1.UserID, "MediaID": movie1.MediaID},
-        {"UserID": user2.UserID, "MediaID": movie2.MediaID},
-    ]))
-
-    session.execute(insert(Watching).values([
-        {"UserID": user3.UserID, "MediaID": movie3.MediaID},
-    ]))
-
-    session.execute(insert(Watchlist).values([
-        {"UserID": user1.UserID, "MediaID": movie2.MediaID},
-        {"UserID": user2.UserID, "MediaID": movie3.MediaID},
-    ]))
-
-    session.commit()
-    session.close()
-    print("✅ Dummy data inserted successfully!")
 
 if __name__ == "__main__":
     create_dummy_data()

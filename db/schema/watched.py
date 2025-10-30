@@ -4,10 +4,10 @@ from db.server import Base
 
 # join table between user and comment
 Watched = Table(
-  'Watched',
+  'watched',
   Base.metadata,
   # grab the UserID primary key and make it a foreign key
-  Column('UserID', Integer, ForeignKey('User.UserID')),
+  Column('UserID', Integer, ForeignKey('user.UserID')),
   # grab the MediaID primary key and make it a foreign key
-  Column('MediaID', Integer, ForeignKey('TVMovie.MediaID'))
+  Column('MediaID', Integer, ForeignKey('tvmovie.MediaID'))
 )
