@@ -2,6 +2,24 @@
 from db.server import get_session       # import get_session function from server.py
 from sqlalchemy import text 
 
+def get_User(table, **filters) -> str:
+    """Search table for user with matching email and password
+        args:
+        table (object): db table
+        **filters: the attribute(s) to query by
+
+        returns:
+            user (object): one user from the db table
+    """
+    session = get_session()
+    try:
+        # Get user from User table
+        user = session.query(table).filter_by(**filters).first()
+        return user
+    finally:
+        # Close session
+        session.close()
+
 def get_all(table) -> list:
     """Select all records from a table using SQLAlchemy
         args:
@@ -37,7 +55,6 @@ def insert(record) -> None:
     finally:
         # Closes the session
         session.close()
-
 def changePost(userid: int, postid: int, newContent: str) -> bool:
     "Allow User to change the text of what they post"
     session = get_session()
@@ -45,14 +62,14 @@ def changePost(userid: int, postid: int, newContent: str) -> bool:
         # Tries to update the post 
         query = """
         UPDATE POST
-        SET CONTENT = :NEWCONTENT
+        SET CONTENT = :NEW_CONTENT
         WHERE POSTID = :POSTID
         AND POSTID IN (
             SELECT C.POSTID
             FROM CREATES C
-            WHERE C.USERID = :USERID);
+            WHERE C.USERID = :USER_ID);
         """
-        session.execute(text(query), {"USERID": userid, "POSTID": postid, "NEWCONTENT": newContent })
+        session.execute(text(query), {"USER_ID": userid, "POST_ID": postid, "NEW_CONTENT": newContent })
         session.commit()
         return True
     except Exception as e:
@@ -67,7 +84,7 @@ def deletePost(userid: int, postid: int) -> bool:
     session = get_session()
     try:
         # Tries to delete the post
-        session.execute("""DELETE COMMENT WHERE POSTID = :POSTID""", {"POSTID": postid})
+        session.execute("""DELETE COMMENT WHERE POSTID = :POST_ID""", {"POST_ID": postid})
        
         session.execute(
         """
@@ -75,11 +92,11 @@ def deletePost(userid: int, postid: int) -> bool:
             AND POSTID IN (
             SELECT C.POSTID
             FROM CREATES C
-            WHERE C.USERID = :USERID);
+            WHERE C.USERID = :USER_ID);
         """,
-        {"POSTID": postid, "USERID": userid})
+        {"POSTID": postid, "USER_ID": userid})
 
-        session.execute("""DELETE CREATES WHERE POSTID = :POSTID;""", {"POSTID": postid})
+        session.execute("""DELETE CREATES WHERE POSTID = :POST_ID;""", {"POST_ID": postid})
 
         session.commit()
         return True
