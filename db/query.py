@@ -1,6 +1,24 @@
 """query.py: Uses SQLAlchemy to create generic queries for interacting with the Postgres database"""
 from db.server import get_session       # import get_session function from server.py
 
+def get_User(table, **filters) -> str:
+    """Search table for user with matching email and password
+        args:
+        table (object): db table
+        **filters: the attribute(s) to query by
+
+        returns:
+            user (object): one user from the db table
+    """
+    session = get_session()
+    try:
+        # Get user from User table
+        user = session.query(table).filter_by(**filters).first()
+        return user
+    finally:
+        # Close session
+        session.close()
+
 def get_all(table) -> list:
     """Select all records from a table using SQLAlchemy
         args:
