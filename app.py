@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
 from db.query import get_all, insert
 from db.server import init_database
-from db.schema.comment import Comment
+# from db.schema.comment import Comment
 from db.schema.post import Post
 from db.schema.tvmovie import TVMovie
 from db.schema.user import User
@@ -57,13 +57,16 @@ def create_app():
         #TODO: implement sign up logic here
         if request.method == 'POST':
             try:
-                user = Users(FirstName=request.form['FirstName'],
-                            LastName=request.form['LastName'],
+                # Read form fields that match the User model column names
+                user = User(FName=request.form['FName'],
+                            LName=request.form['LName'],
+                            UName=request.form['UName'],
                             Email=request.form['Email'],
-                            Password=request.form['Password'])
+                            PWord=request.form['PWord'])
                 insert(user)
                 return redirect('/')
             except Exception as e:
+                # Print the error for debugging and redirect back to signup
                 print("Error inserting user: ", e)
                 return redirect('/signup')
         elif request.method == 'GET':
@@ -77,7 +80,7 @@ def create_app():
             try:
                 email = request.form['Email']
                 password = request.form['Password']
-                all_users = get_all(Users)
+                all_users = get_all(User)
                 for user in all_users:
                     if user.Email == email and user.Password == password:
                         return redirect(url_for('success'))
@@ -90,7 +93,7 @@ def create_app():
     @app.route('/users')
     def users():
         """Users page: displays all users in the Users table"""
-        all_users = get_all(Users)
+        all_users = get_all(User)
         
         return render_template('users.html', users=all_users)
 
