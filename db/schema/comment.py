@@ -16,10 +16,6 @@ class Comment(Base):
     # create relationship with post table
     Post = relationship('Post', back_populates = 'Comment')
 
-    def __init__(self, name):
-        self.Date = self.Date
-        self.Content = self.Content
-
     def __repr__(self):
         return f"""
             "DATE: {self.Date},

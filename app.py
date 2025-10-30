@@ -3,9 +3,9 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
-from db.query import get_all, insert
+from db.query import get_all, insert, get_User
 from db.server import init_database
-from db.schema.comment import Comment
+# from db.schema.comment import Comment
 from db.schema.post import Post
 from db.schema.tvmovie import TVMovie
 from db.schema.user import User
@@ -54,16 +54,18 @@ def create_app():
     @app.route('/signup', methods=['GET', 'POST'])
     def register():
         """Sign up page: enables users to sign up"""
-        #TODO: implement sign up logic here
         if request.method == 'POST':
             try:
-                user = Users(FirstName=request.form['FirstName'],
-                            LastName=request.form['LastName'],
+                # Read form fields that match the User model column names
+                user = User(FName=request.form['FName'],
+                            LName=request.form['LName'],
+                            UName=request.form['UName'],
                             Email=request.form['Email'],
-                            Password=request.form['Password'])
+                            PWord=request.form['PWord'])
                 insert(user)
-                return redirect('/')
+                return redirect(url_for('login'))
             except Exception as e:
+                # Print the error for debugging and redirect back to signup
                 print("Error inserting user: ", e)
                 return redirect('/signup')
         elif request.method == 'GET':
@@ -72,17 +74,14 @@ def create_app():
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         """Log in page: enables users to log in"""
-        # TODO: implement login logic here
         if request.method == 'POST':
             try:
-                email = request.form['Email']
-                password = request.form['Password']
-                all_users = get_all(Users)
-                for user in all_users:
-                    if user.Email == email and user.Password == password:
-                        return redirect(url_for('success'))
+                # Query User table for user that matches the Email and Password submitted in the form
+                user = get_User(User, Email=request.form["Email"], PWord=request.form['PWord'])
+                if user:
+                    return redirect(url_for('success'))
             except Exception as e:
-                print("Error Logging in: ", e)
+                print("Error finding user: ", e)
                 return redirect('/login')
         elif request.method == 'GET':
             return render_template('login.html')
@@ -90,7 +89,7 @@ def create_app():
     @app.route('/users')
     def users():
         """Users page: displays all users in the Users table"""
-        all_users = get_all(Users)
+        all_users = get_all(User)
         
         return render_template('users.html', users=all_users)
 
@@ -98,7 +97,20 @@ def create_app():
     def success():
         """Success page: displayed upon successful login"""
 
-        return render_template('success.html')
+        #TODO: Make Index Page Different if user is logged in
+        return render_template('index.html') # <- CHANGE 'index.html' EVENTUALLY
+
+    @app.route('/my_profile')
+    def my_profile():
+        """User Profile page: displays the current Users profile page"""
+        #TODO: User cookies to only render my_profile.html if the user is logged in otherwise, this should take them to the login page -Matt
+        return render_template('my_profile.html')
+
+    @app.route('/about')
+    def about():
+        """About page: Displays the about us section of the website"""
+        return render_template('about.html')
+
 
     return app
 

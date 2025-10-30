@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from db.server import Base
+from db.schema.follows import Follows
 
 class User(Base):
     __tablename__ = 'User'
@@ -18,20 +19,13 @@ class User(Base):
     # create relationship with comment table. assoc table name = Makes
     Comment = relationship('Comment', secondary = 'Makes', back_populates = 'User')
     # create relationship with TVMovie table. assoc table name = watched
-    TVMovieWatched = relationship('TVMovie', secondary = 'Watched', back_populates = 'User')
+    TVMovieWatched = relationship('TVMovie', secondary = 'Watched', back_populates = 'watchedUser')
     # create relationship with TVMovie table. assoc table name = watching
-    TVMovieWatching= relationship('TVMovie', secondary = 'Watching', back_populates = 'User')
+    TVMovieWatching= relationship('TVMovie', secondary = 'Watching', back_populates = 'watchingUser')
     # create relationship with TVMovie table. assoc table name = watchlist
-    TVMovieWatchlist = relationship('TVMovie', secondary = 'Watchlist', back_populates = 'User')
-    # create relationship with User table. assoc table name = follows
-    Follows = relationship('User', secondary = 'Follows', back_populates = 'User')
-
-    def __init__(self, name):
-        self.FName = self.FName
-        self.LName = self.LName
-        self.UName = self.UName
-        self.PWord = self.PWord
-        self.Email = self.Email
+    TVMovieWatchlist = relationship('TVMovie', secondary = 'Watchlist', back_populates = 'watchlistUser')
+    # self-referential many-to-many for follows (followers / following)
+    # defined after class so User is available for join expressions
 
     def __repr__(self):
         return f"""
@@ -44,3 +38,13 @@ class User(Base):
     
     def __repr__(self):
         return self.__repr__()
+
+# define self-referential followers / following relationship after class definition
+User.followers = relationship(
+    'User',
+    secondary=Follows,
+    primaryjoin=(User.UserID == Follows.c.UserID),
+    secondaryjoin=(User.UserID == Follows.c.FollowerID),
+    foreign_keys=[Follows.c.UserID, Follows.c.FollowerID],
+    backref='following'
+)
