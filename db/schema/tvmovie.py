@@ -13,19 +13,14 @@ class TVMovie(Base):
     Type = Column(String(40))
 
     # create relationship with user table. assoc table name = Watching
-    watchingUser = relationship('User', secondary = 'Watching', back_populates = 'TVMovie')
+    watchingUser = relationship('User', secondary = 'Watching', back_populates = 'TVMovieWatching')
     # create relationship with user table. assoc table name = Watched
-    watchedUser = relationship('User', secondary = 'Watched', back_populates = 'TVMovie')
+    watchedUser = relationship('User', secondary = 'Watched', back_populates = 'TVMovieWatched')
     # create relationship with user table. assoc table name = Watchlist
-    watchlistUser = relationship('User', secondary = 'Watchlist', back_populates = 'TVMovie')
+    watchlistUser = relationship('User', secondary = 'Watchlist', back_populates = 'TVMovieWatchlist')
     # create relationship with post table
     Post = relationship('Post', back_populates = 'TVMovie')
 
-    def __init__(self, name):
-        self.Title = self.Title
-        self.Genre = self.Genre
-        self.Year = self.Year
-        self.Type = self.Type
 
     def __repr__(self):
         return f"""
