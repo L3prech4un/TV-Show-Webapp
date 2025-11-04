@@ -44,7 +44,12 @@
         {% if watching %}
           <ul>
             {% for title in watching %}
-              <li>{{ title }}</li>
+              <li>{{ title }}
+                <form method="post" action="/remove_from_currently_watching" style="display:inline;">
+                  <input type="hidden" name="title" value="{{ title }}">
+                  <button type="submit" class="remove-btn">Remove</button>
+                </form>
+              </li>
             {% endfor %}
           </ul>
         {% else %}
@@ -52,12 +57,26 @@
         {% endif %}
       </div>
 
+      <div class="add-currently-watching-form">
+        <form method="post" action="/add_to_currently_watching">
+          <label for="title">Type a show you are currently watching:</label>
+          <input type="text" name="title" id="title" placeholder="e.g. Breaking Bad" required>
+          <button type="submit" class="add-btn">Add to Currently Watching</button>
+        </form>
+      </div>
+
+
       <div class="watchlist-section">
         <h3>Watched</h3>
         {% if watched %}
           <ul>
             {% for title in watched %}
-              <li>{{ title }}</li>
+              <li>{{ title }}
+                <form method="post" action="/remove_from_watched" style="display:inline;">
+                  <input type="hidden" name="title" value="{{ title }}">
+                  <button type="submit" class="remove-btn">Remove</button>
+                </form>
+              </li>
             {% endfor %}
           </ul>
         {% else %}
@@ -65,19 +84,41 @@
         {% endif %}
       </div>
 
+      <div class="add-watched-form">
+        <form method="post" action="/add_to_watched">
+          <label for="title">Type a show you watched:</label>
+          <input type="text" name="title" id="title" placeholder="e.g. Breaking Bad" required>
+          <button type="submit" class="add-btn">Add to Watched</button>
+        </form>
+      </div>
+
       <div class="watchlist-section">
         <h3>Watchlist</h3>
         {% if watchlist %}
           <ul>
             {% for title in watchlist %}
-              <li>{{ title }}</li>
+              <li>{{ title }}
+                <form method="post" action="/remove_from_watchlist" style="display:inline;">
+                  <input type="hidden" name="title" value="{{ title }}">
+                  <button type="submit" class="remove-btn">Remove</button>
+                </form>
+              </li>
             {% endfor %}
           </ul>
         {% else %}
           <p class="section-empty">Your watchlist is empty.</p>
         {% endif %}
       </div>
+
+      <div class="add-watchlist-form">
+        <form method="post" action="/add_to_watchlist">
+          <label for="title">Type a show you want to watch:</label>
+          <input type="text" name="title" id="title" placeholder="e.g. Breaking Bad" required>
+          <button type="submit" class="add-btn">Add to Watchlist</button>
+        </form>
+      </div>
     </section>
+    
   </div>
 </body>
 </html>

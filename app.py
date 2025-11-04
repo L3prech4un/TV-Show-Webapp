@@ -3,7 +3,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session
-from db.query import get_all, insert, get_User, changePost, deletePost, getFeed, getPostComments, getWatchedTitles, getWatchingTitles, getWatchlistTitles
+from db.query import addToCurrentlyWatching, addToWatched, addToWatchlist, get_all, insert, get_User, changePost, deletePost, getFeed, getPostComments, getWatchedTitles, getWatchingTitles, getWatchlistTitles, removeFromCurrentlyWatching, removeFromWatched, removeFromWatchlist
 from db.server import init_database, get_session
 from db.schema.comment import Comment
 from db.schema.post import Post
@@ -209,7 +209,116 @@ def create_app():
             print("Error deleting post:", e)
 
         return redirect(url_for('my_feed'))
+    
+    @app.route('/add_to_watched', methods=['POST'])
+    def add_to_watched():
+        """Add a TV show to the user's watched list"""
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
 
+        title = request.form.get("title")
+        if not title:
+            return redirect(url_for('my_profile'))
+
+        try:
+            addToWatched(user.UserID, title)
+        except Exception as e:
+            print("Error adding to watched:", e)
+
+    
+        return redirect(url_for('my_profile'))
+    
+    @app.route('/remove_from_watched', methods=['POST'])
+    def remove_from_watched():
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
+
+        title = request.form.get("title")
+        if not title:
+            return redirect(url_for('my_profile'))
+
+        try:
+            removeFromWatched(user.UserID, title)
+        except Exception as e:
+            print("Error removing from watched:", e)
+
+        return redirect(url_for('my_profile'))
+    
+    @app.route('/add_to_currently_watching', methods=['POST'])
+    def add_to_currently_watching():
+        """Add a TV show to the user's currently watching list"""
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
+
+        title = request.form.get("title")
+        if not title:
+            return redirect(url_for('my_profile'))
+
+        try:
+            addToCurrentlyWatching(user.UserID, title)
+        except Exception as e:
+            print("Error adding to currently watching:", e)
+
+        return redirect(url_for('my_profile'))
+    
+    @app.route('/remove_from_currently_watching', methods=['POST'])
+    def remove_from_currently_watching():
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
+
+        title = request.form.get("title")
+        if not title:
+            return redirect(url_for('my_profile'))
+
+        try:
+            removeFromCurrentlyWatching(user.UserID, title)
+        except Exception as e:
+            print("Error removing from currently watching:", e)
+
+        return redirect(url_for('my_profile'))
+    
+    @app.route('/add_to_watchlist', methods=['POST'])
+    def add_to_watchlist():
+        """Add a TV show to the user's watchlist"""
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
+
+        title = request.form.get("title")
+        if not title:
+            return redirect(url_for('my_profile'))
+
+        try:
+            addToWatchlist(user.UserID, title)
+        except Exception as e:
+            print("Error adding to watchlist:", e)
+
+        return redirect(url_for('my_profile'))
+    
+    @app.route('/remove_from_watchlist', methods=['POST'])
+    def remove_from_watchlist():
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
+
+        title = request.form.get("title")
+        if not title:
+            return redirect(url_for('my_profile'))
+
+        try:
+            removeFromWatchlist(user.UserID, title)
+        except Exception as e:
+            print("Error removing from watchlist:", e)
+
+        return redirect(url_for('my_profile'))
+
+
+
+    
     return app
 
 

@@ -435,3 +435,38 @@ input[type="submit"]:hover {
     color: #666;
     font-style: italic;
 }
+
+.remove-btn {
+    background-color: white;
+    color: black;
+    border: 2px solid var(--clr-primary); 
+    border-radius: var(--radius);
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.remove-btn:hover {
+    background-color: var(--clr-primary);
+    color: white;
+}
+.add-btn {
+    background-color: white;
+    color: black;
+    border: 2px solid var(--clr-primary); 
+    border-radius: var(--radius);
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.add-btn:hover {
+    background-color: var(--clr-primary);  
+    color: white; 
+    
+}
+

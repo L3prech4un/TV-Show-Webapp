@@ -225,6 +225,51 @@ def getWatchedTitles(userid: int) -> list:
         session.close()
 
 
+def addToWatched(user_id, title):
+    """Add a show to the user's watched list using SQLAlchemy only."""
+    session = get_session()
+    try:
+        result = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()   
+
+        if result is None:
+            media_id = session.execute(text('INSERT INTO "tvmovie" ("Title") VALUES (:title) RETURNING "MediaID"'),{"title": title}).scalar()
+        else:
+            media_id = result
+        session.execute(
+            text("""
+                INSERT INTO "watched" ("UserID", "MediaID")
+                VALUES (:user_id, :media_id)
+                ON CONFLICT DO NOTHING;
+            """),
+            {"user_id": user_id, "media_id": media_id}
+        )
+        session.commit()
+        return True
+    except Exception as e:
+        session.rollback()
+        print("Error adding to watched list:", e)
+        return False
+    finally:
+        session.close()
+
+def removeFromWatched(user_id, title):
+    """Remove a show from the user's watched list."""
+    session = get_session()
+    try:
+        media_id = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
+
+        if media_id is not None:
+            session.execute(text('DELETE FROM "watched" WHERE "UserID" = :user_id AND "MediaID" = :media_id'),{"user_id": user_id, "media_id": media_id})
+            session.commit()
+            return True
+        return False
+    except Exception as e:
+        session.rollback()
+        print("Error removing from watched:", e)
+        return False
+    finally:
+        session.close()
+
 def getWatchingTitles(userid: int) -> list:
     """Return titles of TV/movies the user is currently watching"""
     session = get_session()
@@ -240,6 +285,53 @@ def getWatchingTitles(userid: int) -> list:
     except Exception as e:
         print("Error getting watching titles:", e)
         return []
+    finally:
+        session.close()
+    
+def addToCurrentlyWatching(user_id, title):
+    """Add a show to the user's currently watching list using SQLAlchemy only."""
+    session = get_session()
+    try:
+        result = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
+
+        if result is None:
+            media_id = session.execute(text('INSERT INTO "tvmovie" ("Title") VALUES (:title) RETURNING "MediaID"'),{"title": title}).scalar()
+        else:
+            media_id = result
+
+        session.execute(
+            text("""
+                INSERT INTO "watching" ("UserID", "MediaID")
+                VALUES (:user_id, :media_id)
+                ON CONFLICT DO NOTHING;
+            """),
+            {"user_id": user_id, "media_id": media_id}
+        )
+
+        session.commit()
+        return True
+    except Exception as e:
+        session.rollback()
+        print("Error adding to currently watching list:", e)
+        return False
+    finally:
+        session.close()
+
+def removeFromCurrentlyWatching(user_id, title):
+    """Remove a show from the user's currently watching list."""
+    session = get_session()
+    try:
+        media_id = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
+
+        if media_id is not None:
+            session.execute(text('DELETE FROM "watching" WHERE "UserID" = :user_id AND "MediaID" = :media_id'),{"user_id": user_id, "media_id": media_id})
+            session.commit()
+            return True
+        return False
+    except Exception as e:
+        session.rollback()
+        print("Error removing from currently watching:", e)
+        return False
     finally:
         session.close()
 
@@ -261,3 +353,51 @@ def getWatchlistTitles(userid: int) -> list:
         return []
     finally:
         session.close()
+
+def addToWatchlist(user_id, title):
+    """Add a show to the user's watchlist using SQLAlchemy only."""
+    session = get_session()
+    try:
+        result = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
+
+        if result is None:
+            media_id = session.execute(text('INSERT INTO "tvmovie" ("Title") VALUES (:title) RETURNING "MediaID"'),{"title": title}).scalar()
+        else:
+            media_id = result
+
+        session.execute(
+            text("""
+                INSERT INTO "watchlist" ("UserID", "MediaID")
+                VALUES (:user_id, :media_id)
+                ON CONFLICT DO NOTHING;
+            """),
+            {"user_id": user_id, "media_id": media_id}
+        )
+
+        session.commit()
+        return True
+    except Exception as e:
+        session.rollback()
+        print("Error adding to watchlist:", e)
+        return False
+    finally:
+        session.close()
+
+def removeFromWatchlist(user_id, title):
+    """Remove a show from the user's watchlist."""
+    session = get_session()
+    try:
+        media_id = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
+
+        if media_id is not None:
+            session.execute(text('DELETE FROM "watchlist" WHERE "UserID" = :user_id AND "MediaID" = :media_id'),{"user_id": user_id, "media_id": media_id})
+            session.commit()
+            return True
+        return False
+    except Exception as e:
+        session.rollback()
+        print("Error removing from watchlist:", e)
+        return False
+    finally:
+        session.close()
+
