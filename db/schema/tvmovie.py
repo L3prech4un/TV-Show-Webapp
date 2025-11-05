@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from db.server import Base
 
 class TVMovie(Base):
-    __tablename__ = 'TVMovie'
+    __tablename__ = 'tvmovie'
     MediaID = Column(Integer,primary_key=True)
     # 40 = max length of string
     Title = Column(String(40))

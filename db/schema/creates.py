@@ -4,10 +4,10 @@ from db.server import Base
 
 # join table between user and post
 Creates = Table(
-  'Creates',
+  'creates',
   Base.metadata,
   # grab the UserID primary key and make it a foreign key
-  Column('UserID', Integer, ForeignKey('User.UserID')),
+  Column('UserID', Integer, ForeignKey('user.UserID')),
   # grab the PostID primary key and make it a foreign key
-  Column('PostID', Integer, ForeignKey('Post.PostID'))
+  Column('PostID', Integer, ForeignKey('post.PostID'))
 )

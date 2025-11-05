@@ -2,11 +2,11 @@
 from sqlalchemy import Table, Column, Integer, ForeignKey
 from db.server import Base
 
-# join table between user and comment
+# join table between user and tvmovie
 Watchlist = Table(
-  'Watchlist',
+  'watchlist',
   Base.metadata,
   # grab the UserID primary key and make it a foreign key
-  Column('UserID', Integer, ForeignKey('User.UserID')),
+  Column('UserID', Integer, ForeignKey('user.UserID')),
   # grab the MediaID primary key and make it a foreign key
-  Column('MediaID', Integer, ForeignKey('TVMovie.MediaID')))
+  Column('MediaID', Integer, ForeignKey('tvmovie.MediaID')))
