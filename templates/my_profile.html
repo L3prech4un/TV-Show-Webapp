@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - Streamline</title>
+  <link rel="stylesheet" href="/static/profileStyle.css" />
+</head>
+
+<body>
+  <navbar>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a href="/">
+          <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/my_feed">My Feed</a>
+      </li>
+      <li class="nav-item">
+        <a href="/my_profile" class="active">My Profile</a>
+      </li>
+      <li class="nav-item">
+        <a href="/about">About</a>
+      </li>
+      <li class="nav-item">
+        <a href="/login">Login</a>
+      </li>
+      <li class="nav-item">
+        <a href="/signup">Sign Up</a>
+      </li>
+      <li class="nav-item">
+        <a href="/discover">Discover</a>
+      </li>
+    </ul>
+  </navbar>
+
+    <div class="feed-containery">
+    <div class="profile-hero">
+      <h1>{{ username }}</h1>
+    </div>
+
+    <section class="profile-sections">
+      <div class="watchlist-section">
+        <h3>Currently Watching</h3>
+        {% if watching %}
+          <ul>
+            {% for title in watching %}
+              <li>{{ title }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="section-empty">You’re not currently watching anything.</p>
+        {% endif %}
+      </div>
+
+      <div class="watchlist-section">
+        <h3>Watched</h3>
+        {% if watched %}
+          <ul>
+            {% for title in watched %}
+              <li>{{ title }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="section-empty">You haven’t marked anything as watched yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="watchlist-section">
+        <h3>Watchlist</h3>
+        {% if watchlist %}
+          <ul>
+            {% for title in watchlist %}
+              <li>{{ title }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="section-empty">Your watchlist is empty.</p>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+</body>
+</html>

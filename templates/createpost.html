@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create Post</title>
+        <link rel="stylesheet" href="/static/feedStyle.css">
+    </head>
+    <body>
+        <navbar>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/">
+                        <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/my_feed">Back to Feed</a>
+                </li>
+            </ul>
+        </navbar>
+
+        <div class="create-post-container">
+            <h2>Create New Post</h2>
+            <form action="{{ url_for('create_post') }}" method="POST" class="create-post-form">
+                <select name="media_id" required>
+                    <option value="">Select TV Show/Movie</option>
+                    {% for media in tvmovies %}
+                    <option value="{{ media.MediaID }}">{{ media.Title }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="title" placeholder="Post title..." required>
+                <textarea name="content" placeholder="Write your thoughts..." required></textarea>
+                <button type="submit" class="create-button">Create Post</button>
+            </form>
+        </div>
+    </body>
+</html>

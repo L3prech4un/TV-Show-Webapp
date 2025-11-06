@@ -1,0 +1,150 @@
+header {
+  background-color: #121212; /* dark background */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 2px solid #e50914; /* red accent line */
+}
+
+/* Navigation Links */
+nav {
+  display: flex;
+  gap: 25px;
+}
+
+nav a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.3s, transform 0.2s;
+}
+
+nav a:hover {
+  color: #ffcc00;
+  transform: scale(1.05);
+}
+
+nav a.active {
+  color: #e50914;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 20px;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  nav a {
+    font-size: 18px;
+  }
+}
+
+/* Hero Section */
+.about-hero {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.about-hero .overlay {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 40px 20px;
+  border-radius: 10px;
+}
+
+.about-hero h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.about-hero p {
+  font-size: 18px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* About Content */
+.about-content {
+  background-color: #121212;
+  color: #e0e0e0;
+  padding: 60px 20px;
+}
+
+.about-content .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-content h2 {
+  color: #e50914;
+  font-size: 28px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.about-content p {
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.about-content ul {
+  list-style: disc;
+  margin-left: 30px;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.about-content li {
+  margin-bottom: 8px;
+}
+
+/* Footer */
+footer {
+  background-color: #1c1c1c;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 14px;
+  margin-top: 40px;
+}
+
+/* Active nav link */
+nav a.active {
+  color: #e50914;
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: 32px;
+  }
+
+  .about-hero p {
+    font-size: 16px;
+  }
+
+  .about-content {
+    padding: 40px 15px;
+  }
+}

@@ -1,0 +1,118 @@
+:root {
+    /* Color Variables */
+    --clr-primary: #6aeeb5;
+    --clr-primary-hover: #29e6a7;
+    --clr-gray100: #f0f7f8;
+    --clr-gray200: #cfd8dc;
+
+    /* border radius */
+    --radius: 0.2rem;   
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--clr-gray100);
+}
+
+/* Navigation Bar Styling */
+.nav-list {
+    background-color: white;
+    box-shadow: 0px 0px 10px var(--clr-gray200);
+    margin: 0;
+    padding: 1rem 0;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.nav-item {
+    list-style: none;
+    margin-right: 3rem;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: black;
+    transition: all 200ms ease-in;
+    font-weight: bold;
+    font-size: large;
+}
+
+.nav-item:first-child {
+    margin-right: auto;
+    margin-left: 1rem;
+}
+
+.nav-item a:hover {
+    color: var(--clr-primary-hover);
+    transition: color 0.3s ease;
+}
+
+
+/* Logo Image Styling */
+.MiniLogo {
+    width: 50px;
+    height: auto;
+}
+
+/* Login Container Styling */
+.login-container {
+    background-color: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: 0px 0px 10px var(--clr-gray200);
+    max-width: 400px;
+    margin: 5rem auto;
+    text-align: center;
+}
+
+.login-container h2 {
+    border-bottom-style: solid;
+    padding-bottom: 0.5rem;
+    border-color: var(--clr-primary)
+}
+
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px
+}
+
+.login-container input {
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--clr-gray200);
+    border-radius: var(--radius);
+    font-size: 1rem;
+}
+
+.login-container input:focus {
+    outline: 2px solid var(--clr-primary-hover);
+}
+
+input[type="submit"] {
+    font-size: 1rem;
+    font-weight: bold;
+    background: var(--clr-primary);
+    border: none;
+    outline: none;
+    border-radius: var(--radius);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    max-width: fit-content;
+    justify-content: center;
+    margin: 0px auto;
+}
+
+input[type="submit"]:hover {
+    background: var(--clr-primary-hover);
+    transition: background 0.3s ease;
+}

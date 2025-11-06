@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Login page</title>
+        <link rel="stylesheet" href="/static/loginStyle.css">
+    </head>
+    <body>
+        <navbar>
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a href="/">
+            <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/my_feed">My Feed</a>
+        </li>
+        <li class="nav-item">
+          <a href="/my_profile">My Profile</a>
+        </li>
+        <li class="nav-item">
+          <a href="/about">About</a>
+        </li>
+        <li class="nav-item">
+          <a href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a href="/signup">Sign Up</a>
+        </li>
+        <li class="nav-item">
+          <a href="/discover">Discover</a>
+        </li>
+      </ul>
+    </navbar>
+
+        <div class="login-container">
+            <div class="login-box">
+                <h2>Login</h2>
+                <form method="POST">
+                    <input type="email" name="Email" required placeholder="Email">
+                    <input type="password" name="PWord" required placeholder="Password">
+                    <input type="submit" class="btn-primary">
+                </form>
+
+                <p>Don't have an account? <a href="/signup">Register</a></p>
+            </div>
+        </div>
+    </body>
+</html>
