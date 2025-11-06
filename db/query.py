@@ -261,3 +261,137 @@ def getWatchlistTitles(userid: int) -> list:
         return []
     finally:
         session.close()
+
+def get_all_users_except_current(user_id: int) -> list:
+    """Get all users except the current user for follow suggestions"""
+    session = get_session()
+    try:
+        query = text("""
+        SELECT "UserID", "UName", "FName", "LName"
+        FROM "user"
+        WHERE "UserID" != :user_id
+        AND "UserID" NOT IN (
+            SELECT "FollowerID" FROM "follows" WHERE "UserID" = :user_id
+        )
+        ORDER BY "UName"
+        """)
+        result = session.execute(query, {"user_id": user_id})
+        return [dict(row) for row in result.mappings()]
+    except Exception as e:
+        print("Error getting users:", e)
+        return []
+    finally:
+        session.close()
+
+def follow_user(user_id: int, follower_id: int) -> bool:
+    """Follow another user"""
+    session = get_session()
+    try:
+        # Check if already following
+        check_query = text("""
+        SELECT 1 FROM "follows" 
+        WHERE "UserID" = :user_id AND "FollowerID" = :follower_id
+        """)
+        existing = session.execute(check_query, {
+            "user_id": user_id, 
+            "follower_id": follower_id
+        }).first()
+        
+        if existing:
+            return False  # Already following
+        
+        # Insert follow relationship
+        insert_query = text("""
+        INSERT INTO "follows" ("UserID", "FollowerID")
+        VALUES (:user_id, :follower_id)
+        """)
+        session.execute(insert_query, {
+            "user_id": user_id,
+            "follower_id": follower_id
+        })
+        session.commit()
+        return True
+    except Exception as e:
+        session.rollback()
+        print("Error following user:", e)
+        return False
+    finally:
+        session.close()
+
+def unfollow_user(user_id: int, follower_id: int) -> bool:
+    """Unfollow a user"""
+    session = get_session()
+    try:
+        query = text("""
+        DELETE FROM "follows" 
+        WHERE "UserID" = :user_id AND "FollowerID" = :follower_id
+        """)
+        result = session.execute(query, {
+            "user_id": user_id,
+            "follower_id": follower_id
+        })
+        session.commit()
+        return result.rowcount > 0
+    except Exception as e:
+        session.rollback()
+        print("Error unfollowing user:", e)
+        return False
+    finally:
+        session.close()
+
+def get_following(user_id: int) -> list:
+    """Get users that the current user is following"""
+    session = get_session()
+    try:
+        query = text("""
+        SELECT U."UserID", U."UName", U."FName", U."LName"
+        FROM "follows" F
+        JOIN "user" U ON F."FollowerID" = U."UserID"
+        WHERE F."UserID" = :user_id
+        ORDER BY U."UName"
+        """)
+        result = session.execute(query, {"user_id": user_id})
+        return [dict(row) for row in result.mappings()]
+    except Exception as e:
+        print("Error getting following list:", e)
+        return []
+    finally:
+        session.close()
+
+def get_followers(user_id: int) -> list:
+    """Get users who are following the current user"""
+    session = get_session()
+    try:
+        query = text("""
+        SELECT U."UserID", U."UName", U."FName", U."LName"
+        FROM "follows" F
+        JOIN "user" U ON F."UserID" = U."UserID"
+        WHERE F."FollowerID" = :user_id
+        ORDER BY U."UName"
+        """)
+        result = session.execute(query, {"user_id": user_id})
+        return [dict(row) for row in result.mappings()]
+    except Exception as e:
+        print("Error getting followers list:", e)
+        return []
+    finally:
+        session.close()
+
+def is_following(user_id: int, target_user_id: int) -> bool:
+    """Check if user is following another user"""
+    session = get_session()
+    try:
+        query = text("""
+        SELECT 1 FROM "follows" 
+        WHERE "UserID" = :user_id AND "FollowerID" = :target_user_id
+        """)
+        result = session.execute(query, {
+            "user_id": user_id,
+            "target_user_id": target_user_id
+        }).first()
+        return result is not None
+    except Exception as e:
+        print("Error checking follow status:", e)
+        return False
+    finally:
+        session.close()

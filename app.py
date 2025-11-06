@@ -2,8 +2,8 @@
 
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, session
-from db.query import get_all, insert, get_User, changePost, deletePost, getFeed, getPostComments, getWatchedTitles, getWatchingTitles, getWatchlistTitles
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from db.query import get_all, insert, get_User, changePost, deletePost, getFeed, getPostComments, getWatchedTitles, getWatchingTitles, getWatchlistTitles, get_all_users_except_current, follow_user, unfollow_user, get_following, get_followers, is_following
 from db.server import init_database, get_session
 from db.schema.comment import Comment
 from db.schema.post import Post
@@ -209,6 +209,52 @@ def create_app():
             print("Error deleting post:", e)
 
         return redirect(url_for('my_feed'))
+
+    # ===============================================================
+    # NEW FOLLOW ROUTES
+    # ===============================================================
+
+    @app.route('/discover')
+    def discover():
+        """Discover page to find and follow other users"""
+        user = checkUserLogin()
+        if not user:
+            return redirect(url_for('login'))
+        
+        suggested_users = get_all_users_except_current(user.UserID)
+        following = get_following(user.UserID)
+        followers = get_followers(user.UserID)
+        
+        return render_template('discover.html', 
+                             suggested_users=suggested_users,
+                             following=following,
+                             followers=followers)
+
+    @app.route('/follow/<int:user_id>', methods=['POST'])
+    def follow_user_route(user_id):
+        """Follow a user"""
+        current_user = checkUserLogin()
+        if not current_user:
+            return redirect(url_for('login'))
+        
+        success = follow_user(current_user.UserID, user_id)
+        if success:
+            return jsonify({'success': True, 'message': 'User followed successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'Already following this user'})
+
+    @app.route('/unfollow/<int:user_id>', methods=['POST'])
+    def unfollow_user_route(user_id):
+        """Unfollow a user"""
+        current_user = checkUserLogin()
+        if not current_user:
+            return redirect(url_for('login'))
+        
+        success = unfollow_user(current_user.UserID, user_id)
+        if success:
+            return jsonify({'success': True, 'message': 'User unfollowed successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'Not following this user'})
 
     return app
 
