@@ -21,11 +21,6 @@ class Post(Base):
     # create relationship with TVMovie table
     TVMovie = relationship('TVMovie', back_populates = 'Post')
 
-    def __init__(self, name):
-        self.Title = self.Title
-        self.Date= self.Date
-        self.Content = self.Content
-
     def __repr__(self):
         return f"""
             "TITLE: {self.Title},

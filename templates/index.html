@@ -1,52 +1,60 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>TV Show WebApp</title>
+    <title>Welcome to Streamline</title>
     <link rel="stylesheet" href="/static/indexStyle.css">
   </head>
   <body>
-    <header>
-      <div class="logo">
-       <img src="/static/images/Logo.png" alt="Streamline Logo" class="logo-img" >
-      </div>
-
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/my_feed">My Feed</a></li>
-          <li><a href="/login">Log In</a></li>
-          <li><a href="/signup">Sign Up</a></li>
-          <li><a href="/my_profile">My Profile</a></li>
+    <navbar>
+        <ul class ="nav-list">
+            <li class ="nav-item">
+            <a href="/">
+                <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+            </a>
+            </li>
+            <li class ="nav-item">
+                <a href="/discover">Discover</a>
+            </li>
+            <li class ="nav-item">
+                <a href="/my_profile">My Profile</a>
+            </li>
+            <li class="nav-item">
+                <a href="/my_feed">My Feed</a>
+            </li>
+            <li class="nav-item">
+                <a href="/about">About</a>
+            </li>
+            <li class ="nav-item">
+                <a href="/login">Login</a>
+            </li>
+            <li class ="nav-item">
+                <a href="/signup">Sign Up</a>
+            </li>
         </ul>
+        </navbar>
 
-        <div class="search-bar">
-          <input type="text" placeholder="Search shows..." />
-          <button>Search</button>
+        <div class="main-page">
+          <div class="intro">
+            <h1>Welcome to Streamline</h1>
+            <div class="content">
+              <p >Your Personal TV Show Experience</p>
+
+              <div class="info-boxes">
+                <div class="info-box">
+                  <h3>Track Your Watching Habits</h3>
+                  <p>Keep a personal record of what you're watching, want to watch, and have finished.</p>
+                </div>
+                <div class="info-box">
+                  <h3>Share Reviews On What You Watch</h3>
+                  <p>Write reviews and share your thoughts about your favorite TV shows and movies.</p>
+                </div>
+                <div class="info-box">
+                  <h3>Connect With Other Users</h3>
+                  <p>Follow other users and discover what they're watching and discussing.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </nav>
-
-      <div class="header-container" id="home">
-        </div>
-
-        <div class="header-item">
-          <h1>Welcome to Streamline</h1>
-          <p>Your ultimate destination for TV show enthusiasts! Discover, track, and share your favorite shows all in one place.</p>
-        </div>
-
-        <div class="header-item">
-          <a href="/login"><button class="header-button" type="button">Login</button></a>
-          <a href="/signup"><button class="header-button" type="button">Signup</button></a> 
-        </div> 
-      </div>
-
-      <section class="hero">
-        <div class="hero-text">
-          <h1>Find, Rate, and Share Your Favorite TV Shows</h1>
-          <p>Discover the latest reviews, explore trending series, and connect with a community of TV enthusiasts.</p>
-          <a href-="/#"><button class="feed-btn">My Feed</button></a>
-        </div>
-      </section>
-    </header>
   </body>
 </html>
