@@ -1,0 +1,64 @@
+:root {
+    /* Color Variables */
+    --clr-primary: #6aeeb5;
+    --clr-primary-hover: #29e6a7;
+    --clr-gray100: #f0f7f8;
+    --clr-gray200: #cfd8dc;
+
+    /* border radius */
+    --radius: 0.2rem;   
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--clr-gray100);
+}
+
+/* Navigation Bar Styling */
+.nav-list {
+    background-color: white;
+    box-shadow: 0px 0px 10px var(--clr-gray200);
+    margin: 0;
+    padding: 1rem 0;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.nav-item {
+    list-style: none;
+    margin-right: 3rem;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: black;
+    transition: all 200ms ease-in;
+    font-weight: bold;
+    font-size: large;
+}
+
+.nav-item:first-child {
+    margin-right: auto;
+    margin-left: 1rem;
+}
+
+.nav-item a:hover {
+    color: var(--clr-primary-hover);
+    transition: color 0.3s ease;
+}
+
+
+/* Logo Image Styling */
+.MiniLogo {
+    width: 50px;
+    height: auto;
+}
