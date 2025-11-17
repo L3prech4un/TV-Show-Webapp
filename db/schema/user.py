@@ -16,7 +16,7 @@ class User(Base):
     FName = Column(String(40))
     LName = Column(String(40))
     UName = Column(String(40))
-    PWord = Column(String(40))
+    PWord = Column(String(100))
     Email = Column(String(40))
 
     # create relationship with post table. assoc table name = Creates
