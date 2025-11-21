@@ -15,6 +15,9 @@ load_dotenv()
 #create cache for the user
 userCache = {}
 
+folderPath = "logs"
+os.makedirs(folderPath, exist_ok = True)
+
 # configure logging
 logging.basicConfig(
     filename="logs/log.txt", level=logging.INFO, filemode="a", format="%(asctime)s [%(levelname)s] %(message)s"
