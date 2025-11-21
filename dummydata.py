@@ -11,17 +11,22 @@ from db.schema.makes import Makes
 from db.schema.watched import Watched
 from db.schema.watching import Watching
 from db.schema.watchlist import Watchlist
+import bcrypt
+
+def hash_password(password: str) -> str:
+    """Hashes the password"""
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def create_dummy_data():    
     session = get_session()
     try:
         # --- Create Users ---
         users = [
-            User(FName="Alice", LName="Smith", UName="alice123", PWord="pass123", Email="alice@example.com"),
-            User(FName="Bob", LName="Jones", UName="bobby", PWord="secret", Email="bob@example.com"),
-            User(FName="Charlie", LName="Brown", UName="charlieB", PWord="charlie123", Email="charlie@example.com"),
-            User(FName="Diana", LName="Prince", UName="dianaP", PWord="wonder", Email="diana@example.com"),
-            User(FName="Eve", LName="Adams", UName="eveA", PWord="evepass", Email="eve@example.com")
+            User(FName="Alice", LName="Smith", UName="alice123", PWord=hash_password("pass123"), Email="alice@example.com"),
+            User(FName="Bob", LName="Jones", UName="bobby", PWord= hash_password("secret"), Email="bob@example.com"),
+            User(FName="Charlie", LName="Brown", UName="charlieB", PWord=hash_password("charlie123"), Email="charlie@example.com"),
+            User(FName="Diana", LName="Prince", UName="dianaP", PWord=hash_password("wonder"), Email="diana@example.com"),
+            User(FName="Eve", LName="Adams", UName="eveA", PWord=hash_password("evepass"), Email="eve@example.com")
         ]
         session.add_all(users)
         session.flush()  # Assigns UserIDs

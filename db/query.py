@@ -106,7 +106,7 @@ def getPostComments(postid: int) -> list:
     try:
         query = text(
             """
-            SELECT U."UName" AS username, C."Content" AS comment_content
+            SELECT U."UserID" as userid, U."UName" AS username, C."Content" AS comment_content, C."CommentID" as commentid
             FROM "comment" C
             JOIN "post" P ON C."PostID" = P."PostID"
             JOIN "makes" M ON C."CommentID" = M."CommentID"
@@ -183,6 +183,48 @@ def addComment(userid: int, postid: int, content: str) -> None:
     except Exception as e:
         session.rollback()
         print(f"Error adding comment to post", e)
+    finally:
+        session.close()
+
+def deleteComment(comment_id: int, user_id: int) -> bool:
+    """Delete a comment if the user owns it"""
+    session = get_session()
+    try:
+        
+        check_query = text(
+        """
+        SELECT 1 FROM "makes" 
+        WHERE "CommentID" = :comment_id AND "UserID" = :user_id
+        """)
+        ownership = session.execute(check_query, {
+            "comment_id": comment_id,
+            "user_id": user_id
+        }).first()
+        
+        if not ownership:
+            return False
+        
+        delete_makes_query = text(
+        """
+        DELETE FROM "makes" 
+        WHERE "CommentID" = :comment_id
+        """)
+        session.execute(delete_makes_query, {"comment_id": comment_id})
+        
+        delete_comment_query = text(
+        """
+        DELETE FROM "comment" 
+        WHERE "CommentID" = :comment_id
+        """)
+        result = session.execute(delete_comment_query, {"comment_id": comment_id})
+        
+        session.commit()
+        return result.rowcount > 0
+        
+    except Exception as e:
+        session.rollback()
+        print(f"Error deleting comment: {e}")
+        return False
     finally:
         session.close()
 

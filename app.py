@@ -15,9 +15,6 @@ load_dotenv()
 #create cache for the user
 userCache = {}
 
-folderPath = "logs"
-os.makedirs(folderPath, exist_ok = True)
-
 # configure logging
 logging.basicConfig(
     filename="logs/log.txt", level=logging.INFO, filemode="a", format="%(asctime)s [%(levelname)s] %(message)s"
@@ -427,7 +424,26 @@ def create_app():
         """Check if the User is logged in"""
         loggedinuser = request.cookies.get('userloggedin')
         return userCache.get(loggedinuser)
-    
+
+    @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+    def delete_comment(comment_id):
+        """Delete a comment from a post"""
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No User is Logged in")
+            return redirect(url_for('login'))
+        
+        try:
+            success = query.deleteComment(comment_id, user.UserID)
+            if success:
+                logger.info(f"Comment {comment_id} deleted successfully by user {user.UserID}")
+            else:
+                logger.warning(f"User {user.UserID} failed to delete comment {comment_id}")
+        except Exception as e:
+            logger.error(f"Error deleting comment {comment_id}: {e}")
+        
+        return redirect(url_for('my_feed'))
+
     return app
     
 if __name__ == "__main__":

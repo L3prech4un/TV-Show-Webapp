@@ -58,6 +58,11 @@
                             {% for comment in comments %}
                             <div class="comment">
                                 <p><strong>{{ comment.username }}</strong>: {{ comment.comment_content }}</p>
+                                {% if comment.userid|string == request.cookies.get('userloggedin')|string %}
+                                <form method="POST" action="/delete_comment/{{ comment.commentid }}">
+                                    <button type="submit" class="delete-comment-btn">Delete</button>
+                                </form>
+                                {% endif %}
                             </div>
                             {% endfor %}
                         {% else %}
