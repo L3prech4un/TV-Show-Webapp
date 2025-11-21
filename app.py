@@ -219,8 +219,9 @@ def create_app():
                 if deletepostid:
                     query.deletePost(deletepostid)
                     logger.info(f"Post has been Deleted: {deletepostid}")
+                return redirect(url_for('my_feed'))
             posts = query.getFeed(user.UserID)
-            return render_template('feed.html', posts=posts, getPostComments=query.getPostComments)
+            return render_template('feed.html', posts=posts, getPostComments=query.getPostComments )
         except Exception as e:
             logger.warning(f"Error Getting Feed Page: {e}")
             return render_template('feed.html', posts=[])
@@ -239,8 +240,9 @@ def create_app():
             title = request.form.get('title')
             content = request.form.get('content')
             mediaid = request.form.get('mediaid')
+            spoiler = request.form.get('spoiler') == 'on'
             try:
-                query.createPost(userid,mediaid,title,content)
+                query.createPost(userid,mediaid,title,content,spoiler)
                 logger.info("User has succesfully created a post")
                 return redirect(url_for('my_feed'))
             except Exception as e:
@@ -428,6 +430,26 @@ def create_app():
         loggedinuser = request.cookies.get('userloggedin')
         return userCache.get(loggedinuser)
     
+    @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+    def delete_comment(comment_id):
+        """Delete a comment from a post"""
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No User is Logged in")
+            return redirect(url_for('login'))
+
+        try:
+            success = query.deleteComment(comment_id, user.UserID)
+            if success:
+                logger.info(f"Comment {comment_id} deleted successfully by user {user.UserID}")
+            else:
+                logger.warning(f"User {user.UserID} failed to delete comment {comment_id}")
+        except Exception as e:
+            logger.error(f"Error deleting comment {comment_id}: {e}")
+
+        return redirect(url_for('my_feed'))
+
+
     return app
     
 if __name__ == "__main__":

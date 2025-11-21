@@ -22,8 +22,10 @@
                     <option value="{{media.MediaID}}">{{ media.Title }}</option>
                     {% endfor %}
                 </select>
-                <input type="text" name="title" placeholder="Title Goes Here" required>
-                <textarea name="content" placeholder="What do you want to say?" required></textarea>
+                <input type="text" name="title" placeholder="Title Goes Here" required maxlength="40" pattern="^[a-zA-Z0-9_ ]+$">
+                <textarea name="content" placeholder="What do you want to say?" required maxlength="250" pattern="^[a-zA-Z0-9_ ]+$"></textarea>
+                <label for="spoiler">Is it a spoiler?</label>
+                <input type="checkbox" name="spoiler">
                 <button type="submit">Create Post</button>
             </form>
         </div>

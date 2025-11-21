@@ -68,7 +68,7 @@ def getFeed(userid: int) -> list:
         query = text(
             """
             SELECT U2."UserID" AS userid, U2."UName" AS username, P1."PostID" AS postid, P1."Title" AS post_title, 
-                P1."Date" AS post_date, P1."Content" AS post_content, TV1."Title" AS media_title
+                P1."Date" AS post_date, P1."Content" AS post_content, TV1."Title" AS media_title, P1."Spoiler" As spoiler
             FROM "user" U1
             JOIN "follows" F ON U1."UserID" = F."UserID"
             JOIN "user" U2 ON F."FollowerID" = U2."UserID"
@@ -80,7 +80,7 @@ def getFeed(userid: int) -> list:
             UNION
 
             SELECT U3."UserID" AS userid, U3."UName" AS username, P2."PostID" AS postid, P2."Title" AS post_title,
-                P2."Date" AS post_date, P2."Content" AS post_content, TV2."Title"
+                P2."Date" AS post_date, P2."Content" AS post_content, TV2."Title", P2."Spoiler" AS spoiler
             FROM "user" U3
             JOIN "creates" C2 ON U3."UserID" = C2."UserID"
             JOIN "post" P2 ON C2."PostID" = P2."PostID"
@@ -106,7 +106,7 @@ def getPostComments(postid: int) -> list:
     try:
         query = text(
             """
-            SELECT U."UName" AS username, C."Content" AS comment_content
+            SELECT U."UserID" as userid, U."UName" AS username, C."Content" AS comment_content, C."CommentID" as commentid
             FROM "comment" C
             JOIN "post" P ON C."PostID" = P."PostID"
             JOIN "makes" M ON C."CommentID" = M."CommentID"
@@ -148,14 +148,15 @@ def getTitles(userid: int, table: str, titlename: str) -> list:
     finally:
         session.close()
 
-def createPost(userid: int, mediaid: int, title: str, content :str) -> None:
+def createPost(userid: int, mediaid: int, title: str, content: str, spoiler: bool) -> None:
     """Creates a post to add to the database"""
     session = get_session()
     try:
         post = Post(MediaID = mediaid, 
                     Title = title,
                     Date = datetime.now().today().strftime("%Y-%m-%d"),
-                    Content = content)
+                    Content = content,
+                    Spoiler = spoiler)
         session.add(post)
         session.flush()
 
@@ -393,5 +394,47 @@ def removeFromWatchTable(userid: int, title: str, table: str) -> None:
     except Exception as e:
         session.rollback()
         print(f"Error removing from {table}: {e}")
+    finally:
+        session.close()
+
+def deleteComment(comment_id: int, user_id: int) -> bool:
+    """Delete a comment if the user owns it"""
+    session = get_session()
+    try:
+
+        check_query = text(
+        """
+        SELECT 1 FROM "makes" 
+        WHERE "CommentID" = :comment_id AND "UserID" = :user_id
+        """)
+        ownership = session.execute(check_query, {
+            "comment_id": comment_id,
+            "user_id": user_id
+        }).first()
+
+        if not ownership:
+            return False
+
+        delete_makes_query = text(
+        """
+        DELETE FROM "makes" 
+        WHERE "CommentID" = :comment_id
+        """)
+        session.execute(delete_makes_query, {"comment_id": comment_id})
+
+        delete_comment_query = text(
+        """
+        DELETE FROM "comment" 
+        WHERE "CommentID" = :comment_id
+        """)
+        result = session.execute(delete_comment_query, {"comment_id": comment_id})
+
+        session.commit()
+        return result.rowcount > 0
+
+    except Exception as e:
+        session.rollback()
+        print(f"Error deleting comment: {e}")
+        return False
     finally:
         session.close()
