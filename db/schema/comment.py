@@ -10,7 +10,7 @@ class Comment(Base):
     PostID = Column(Integer,ForeignKey('post.PostID'))
     # 40 = max length of string
     Date = Column(String(40))
-    Content = Column(String(40))
+    Content = Column(String(100))
 
     # create relationship with user table. assoc table name = makes
     User = relationship('User', secondary = Makes, back_populates = 'Comment')
