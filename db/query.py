@@ -8,7 +8,7 @@ from db.schema.creates import Creates
 from datetime import datetime
 
 def get_User(table, **filters) -> str:
-    """Search table for user with matching email and password
+    """Search table for user
         args:
         table (object): db table
         **filters: the attribute(s) to query by
@@ -106,7 +106,7 @@ def getPostComments(postid: int) -> list:
     try:
         query = text(
             """
-            SELECT U."UName" AS username, C."Content" AS comment_content
+            SELECT U."UserID" as userid, U."UName" AS username, C."Content" AS comment_content, C."CommentID" as commentid
             FROM "comment" C
             JOIN "post" P ON C."PostID" = P."PostID"
             JOIN "makes" M ON C."CommentID" = M."CommentID"
@@ -125,71 +125,25 @@ def getPostComments(postid: int) -> list:
     finally:
         session.close()
 
-def getWatchedTitles(userid: int) -> list:
-    """ Return the title of TV/movies the user has watched"""
+def getTitles(userid: int, table: str, titlename: str) -> list:
+    """ Return the title of TV/movies watched, watching, or watches """
     session = get_session()
     try:
         query = text(
-            """
-            SELECT TV."Title" AS watched_title
+            f"""
+            SELECT TV."Title" AS {titlename}
             FROM "user" U
-            JOIN "watched" W ON U."UserID" = W."UserID"
+            JOIN {table} W ON U."UserID" = W."UserID"
             JOIN "tvmovie" TV ON W."MediaID" = TV."MediaID"
-            WHERE W."UserID" = :user_id
+            WHERE W."UserID" = :user_id         
             """
         )
-        watched = session.execute(query, {"user_id": userid}).mappings().all()
-        return [row["watched_title"] for row in watched]
-        
+        titles = session.execute(query, {"user_id": userid}).mappings().all()
+        return [row[titlename] for row in titles]
+    
     except Exception as e:
         session.rollback()
-        print(f"Error getting user watched titles")
-        return[]
-    finally:
-        session.close()
-
-def getWatchingTitles(userid: int) -> list:
-    """ Return the title of TV/movies the user is watching"""
-    session = get_session()
-    try:
-        query = text(
-            """
-            SELECT TV."Title" AS watching_title
-            FROM "user" U
-            JOIN "watching" W ON U."UserID" = W."UserID"
-            JOIN "tvmovie" TV ON W."MediaID" = TV."MediaID"
-            WHERE W."UserID" = :user_id
-            """
-        )
-        watching = session.execute(query, {"user_id": userid}).mappings().all()
-        return [row["watching_title"] for row in watching]
-        
-    except Exception as e:
-        session.rollback()
-        print(f"Error getting user watching titles", e)
-        return[]
-    finally:
-        session.close()
-
-def getWatchlistTitles(userid: int) -> list:
-    """ Return the title of TV/movies the user has on their watchlist"""
-    session = get_session()
-    try:
-        query = text(
-            """
-            SELECT TV."Title" AS watchlist_title
-            FROM "user" U
-            JOIN "watchlist" W ON U."UserID" = W."UserID"
-            JOIN "tvmovie" TV ON W."MediaID" = TV."MediaID"
-            WHERE W."UserID" = :user_id
-            """
-        )
-        watchlist = session.execute(query, {"user_id": userid}).mappings().all()
-        return [row["watchlist_title"] for row in watchlist]
-        
-    except Exception as e:
-        session.rollback()
-        print(f"Error getting user watchlist titles", e)
+        print(f"Error getting user {table} titles {e}")
         return[]
     finally:
         session.close()
@@ -229,6 +183,48 @@ def addComment(userid: int, postid: int, content: str) -> None:
     except Exception as e:
         session.rollback()
         print(f"Error adding comment to post", e)
+    finally:
+        session.close()
+
+def deleteComment(comment_id: int, user_id: int) -> bool:
+    """Delete a comment if the user owns it"""
+    session = get_session()
+    try:
+        
+        check_query = text(
+        """
+        SELECT 1 FROM "makes" 
+        WHERE "CommentID" = :comment_id AND "UserID" = :user_id
+        """)
+        ownership = session.execute(check_query, {
+            "comment_id": comment_id,
+            "user_id": user_id
+        }).first()
+        
+        if not ownership:
+            return False
+        
+        delete_makes_query = text(
+        """
+        DELETE FROM "makes" 
+        WHERE "CommentID" = :comment_id
+        """)
+        session.execute(delete_makes_query, {"comment_id": comment_id})
+        
+        delete_comment_query = text(
+        """
+        DELETE FROM "comment" 
+        WHERE "CommentID" = :comment_id
+        """)
+        result = session.execute(delete_comment_query, {"comment_id": comment_id})
+        
+        session.commit()
+        return result.rowcount > 0
+        
+    except Exception as e:
+        session.rollback()
+        print(f"Error deleting comment: {e}")
+        return False
     finally:
         session.close()
 
@@ -407,105 +403,37 @@ def is_following(user_id: int, target_user_id: int) -> bool:
     finally:
         session.close()
 
-def addToWatched(userid: int, mediaid: int) -> None:
-    """Add a show to the user's watched list using SQLAlchemy only."""
+def addToWatchTable(userid: int, mediaid: int, table: str ) -> None:
+    """Add a movie/show to user's list"""
     session = get_session()
     try:
-        session.execute(
-            text("""
-                INSERT INTO "watched" ("UserID", "MediaID")
-                VALUES (:user_id, :media_id)
-                ON CONFLICT DO NOTHING;
-            """),
-            {"user_id": userid, "media_id": mediaid}
+        query = text(
+            f"""
+            INSERT INTO {table} ("UserID", "MediaID")
+            VALUES (:user_id, :media_id)
+            ON CONFLICT DO NOTHING
+            """
         )
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        print("Error adding to watched list:", e)
-    finally:
-        session.close()
-
-def removeFromWatched(userid:int, title:str) -> None:
-    """Remove a show from the user's watched list."""
-    session = get_session()
-    try:
-        mediaid = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
         
-        if mediaid:
-            session.execute(text('DELETE FROM "watched" WHERE "UserID" = :user_id AND "MediaID" = :media_id'),{"user_id": userid, "media_id": mediaid})
-            session.commit()
-
-    except Exception as e:
-        session.rollback()
-        print("Error removing from watched:", e)
-    finally:
-        session.close()
-
-def addToCurrentlyWatching(userid: int, mediaid:int) -> None:
-    """Add a show to the user's currently watching list using SQLAlchemy only."""
-    session = get_session()
-    try:
-        session.execute(
-            text("""
-                INSERT INTO "watching" ("UserID", "MediaID")
-                VALUES (:user_id, :media_id)
-                ON CONFLICT DO NOTHING;
-            """),
-            {"user_id": userid, "media_id": mediaid}
-        )
+        session.execute(query, {"user_id": userid, "media_id": mediaid})
         session.commit()
     except Exception as e:
         session.rollback()
-        print("Error adding to currently watching list:", e)
+        print(f"Error adding to {table}: {e}")
     finally:
         session.close()
 
-def removeFromCurrentlyWatching(userid: int, title: str) -> None:
-    """Remove a show from the user's currently watching list."""
+def removeFromWatchTable(userid: int, title: str, table: str) -> None:
+    """Remove a movie/show from the user's list"""
     session = get_session()
     try:
-        mediaid = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
+        mediaid = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'), {"title": title}).scalar()
+
         if mediaid:
-            session.execute(text('DELETE FROM "watching" WHERE "UserID" = :user_id AND "MediaID" = :media_id'),{"user_id": userid, "media_id": mediaid})
+            session.execute(text(f'DELETE FROM {table} WHERE "UserID" = :user_id AND "MediaID" = :media_id'), {"user_id": userid, "media_id": mediaid})
             session.commit()
     except Exception as e:
         session.rollback()
-        print("Error removing from currently watching:", e)
-        return False
-    finally:
-        session.close()
-
-def addToWatchlist(userid, mediaid):
-    """Add a show to the user's watchlist using SQLAlchemy only."""
-    session = get_session()
-    try:
-        session.execute(
-            text("""
-                INSERT INTO "watchlist" ("UserID", "MediaID")
-                VALUES (:user_id, :media_id)
-                ON CONFLICT DO NOTHING;
-            """),
-            {"user_id": userid, "media_id": mediaid}
-        )
-
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        print("Error adding to watchlist:", e)
-    finally:
-        session.close()
-
-def removeFromWatchlist(userid, title) -> None:
-    """Remove a show from the user's watchlist."""
-    session = get_session()
-    try:
-        mediaid = session.execute(text('SELECT "MediaID" FROM "tvmovie" WHERE "Title" = :title'),{"title": title}).scalar()
-        if mediaid:
-            session.execute(text('DELETE FROM "watchlist" WHERE "UserID" = :user_id AND "MediaID" = :media_id'),{"user_id": userid, "media_id": mediaid})
-            session.commit()
-    except Exception as e:
-        session.rollback()
-        print("Error removing from watchlist:", e)
+        print(f"Error removing from {table}: {e}")
     finally:
         session.close()
