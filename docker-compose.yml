@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: TV-SHOW-WEBAPP
+    environment:
+      POSTGRES_DB: ${db_name}
+      POSTGRES_USER: ${db_owner}
+      POSTGRES_PASSWORD: ${db_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${db_owner}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: TV-SHOW-WEBAPP_flask
+    environment:
+      db_name: ${db_name}
+      db_owner: ${db_owner}
+      db_pass: ${db_pass}
+      db_host: db
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
