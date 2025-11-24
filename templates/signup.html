@@ -34,11 +34,11 @@
             <div class="signup-box">
                 <h2>Signup</h2>
                 <form method="POST">
-                    <input type="text" name="FName" required placeholder="First Name">
-                    <input type="text" name="LName" required placeholder="Last Name">
-                    <input type="text" name="UName" required placeholder="Username">
+                    <input type="text" name="FName" required placeholder="First Name" minlength="2" pattern="^[a-zA-Z]+$">
+                    <input type="text" name="LName" required placeholder="Last Name" minlength="2" pattern="^[a-zA-Z]+$">
+                    <input type="text" name="UName" required placeholder="Username" minlength="2" pattern="^[a-zA-Z0-9_]+$">
                     <input type="email" name="Email" required placeholder="Email">
-                    <input type="password" name="PWord" required placeholder="Password">
+                    <input type="password" name="PWord" required placeholder="Password" minlength="8" pattern="^[a-zA-Z0-9]+$">
                     <input type="submit" class="btn-primary" value="Sign up">
                 </form>
             </div>

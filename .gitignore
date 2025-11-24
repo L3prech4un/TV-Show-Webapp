@@ -1,3 +1,9 @@
+#dummydata file
+dummydata.py
+
+#logs
+logs/
+
 # byte-compiled/optimized/dll files
 db/__pycache__
 db/schema/__pycache__
