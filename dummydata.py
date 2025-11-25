@@ -124,4 +124,5 @@ def create_dummy_data():
     finally:
         session.close()
 
-create_dummy_data()
+if __name__ == "__main__":
+    create_dummy_data()

@@ -26,10 +26,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # database connection - values set in .env
+# defaults to localhost for local dev
+db_host = os.getenv('db_host','localhost')
+# defaults to local port where postgres svr running
+db_port = os.getenv('db_port','5432')
 db_name = os.getenv('db_name')
 db_owner = os.getenv('db_owner')
 db_pass = os.getenv('db_pass')
-db_url = f"postgresql://{db_owner}:{db_pass}@localhost/{db_name}"
+db_url = f"postgresql://{db_owner}:{db_pass}@{db_host}:{db_port}/{db_name}"
 
 def create_app():
     """Create Flask application and connect to your DB"""
@@ -72,13 +76,13 @@ def create_app():
                 password = request.form['PWord'].strip()
 
                 # validate first name
-                if not firstName.isalpha() and len(firstName) >= 2:
+                if not firstName.isalpha() or len(firstName) < 2:
                     error = "First name can only contain letters and must be at least two characters."
                     logger.warning(f"Invalid first name attempt: {firstName}")
                     return render_template('signup.html', error=error)
                 
                 # validate last name
-                if not lastName.isalpha() and len(lastName) >= 2:
+                if not lastName.isalpha() or len(lastName) < 2:
                     error = "Last name can only contain letters and must be at least two characters."
                     logger.warning(f"Invalid last name attempt: {lastName}")
                     return render_template('signup.html', error=error)
@@ -455,4 +459,4 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     # debug refreshes your application with your new changes every time you save
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0') # host='0.0.0.0' allows externl connections (req'd for docker)
