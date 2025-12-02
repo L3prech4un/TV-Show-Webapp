@@ -15,6 +15,9 @@ load_dotenv()
 #create cache for the user
 userCache = {}
 
+folderPath = "logs"
+os.makedirs(folderPath, exist_ok = True)
+
 # configure logging
 logging.basicConfig(
     filename="logs/log.txt", level=logging.INFO, filemode="a", format="%(asctime)s [%(levelname)s] %(message)s"
@@ -23,10 +26,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # database connection - values set in .env
+# defaults to localhost for local dev
+db_host = os.getenv('db_host','localhost')
+# defaults to local port where postgres svr running
+db_port = os.getenv('db_port','5432')
 db_name = os.getenv('db_name')
 db_owner = os.getenv('db_owner')
 db_pass = os.getenv('db_pass')
-db_url = f"postgresql://{db_owner}:{db_pass}@localhost/{db_name}"
+db_url = f"postgresql://{db_owner}:{db_pass}@{db_host}:{db_port}/{db_name}"
 
 def create_app():
     """Create Flask application and connect to your DB"""
@@ -69,13 +76,13 @@ def create_app():
                 password = request.form['PWord'].strip()
 
                 # validate first name
-                if not firstName.isalpha() and len(firstName) >= 2:
+                if not firstName.isalpha() or len(firstName) < 2:
                     error = "First name can only contain letters and must be at least two characters."
                     logger.warning(f"Invalid first name attempt: {firstName}")
                     return render_template('signup.html', error=error)
                 
                 # validate last name
-                if not lastName.isalpha() and len(lastName) >= 2:
+                if not lastName.isalpha() or len(lastName) < 2:
                     error = "Last name can only contain letters and must be at least two characters."
                     logger.warning(f"Invalid last name attempt: {lastName}")
                     return render_template('signup.html', error=error)
@@ -216,8 +223,9 @@ def create_app():
                 if deletepostid:
                     query.deletePost(deletepostid)
                     logger.info(f"Post has been Deleted: {deletepostid}")
+                return redirect(url_for('my_feed'))
             posts = query.getFeed(user.UserID)
-            return render_template('feed.html', posts=posts, getPostComments=query.getPostComments)
+            return render_template('feed.html', posts=posts, getPostComments=query.getPostComments )
         except Exception as e:
             logger.warning(f"Error Getting Feed Page: {e}")
             return render_template('feed.html', posts=[])
@@ -236,8 +244,9 @@ def create_app():
             title = request.form.get('title')
             content = request.form.get('content')
             mediaid = request.form.get('mediaid')
+            spoiler = request.form.get('spoiler') == 'on'
             try:
-                query.createPost(userid,mediaid,title,content)
+                query.createPost(userid,mediaid,title,content,spoiler)
                 logger.info("User has succesfully created a post")
                 return redirect(url_for('my_feed'))
             except Exception as e:
@@ -425,9 +434,29 @@ def create_app():
         loggedinuser = request.cookies.get('userloggedin')
         return userCache.get(loggedinuser)
     
+    @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+    def delete_comment(comment_id):
+        """Delete a comment from a post"""
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No User is Logged in")
+            return redirect(url_for('login'))
+
+        try:
+            success = query.deleteComment(comment_id, user.UserID)
+            if success:
+                logger.info(f"Comment {comment_id} deleted successfully by user {user.UserID}")
+            else:
+                logger.warning(f"User {user.UserID} failed to delete comment {comment_id}")
+        except Exception as e:
+            logger.error(f"Error deleting comment {comment_id}: {e}")
+
+        return redirect(url_for('my_feed'))
+
+
     return app
     
 if __name__ == "__main__":
     app = create_app()
     # debug refreshes your application with your new changes every time you save
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0') # host='0.0.0.0' allows externl connections (req'd for docker)
