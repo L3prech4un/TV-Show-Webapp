@@ -1,6 +1,6 @@
 """query.py: Uses SQLAlchemy to create generic queries for interacting with the Postgres database"""
 from db.server import get_session       # import get_session function from server.py
-from sqlalchemy import text
+from sqlalchemy import or_, text
 from db.schema.comment import Comment
 from db.schema.makes import Makes
 from db.schema.post import Post
@@ -393,5 +393,34 @@ def removeFromWatchTable(userid: int, title: str, table: str) -> None:
     except Exception as e:
         session.rollback()
         print(f"Error removing from {table}: {e}")
+    finally:
+        session.close()
+
+def search_users(search_term: str, current_user_id: int = None) -> list:
+    """Search for users by username, first name, or last name"""
+    session = get_session()
+    try:
+        from db.schema.user import User  
+        
+        search_pattern = f"%{search_term}%"
+        
+        query = session.query(User).filter(
+            or_(
+                User.UName.ilike(search_pattern),
+                User.FName.ilike(search_pattern),
+                User.LName.ilike(search_pattern)
+            )
+        )
+        
+        if current_user_id:
+            query = query.filter(User.UserID != current_user_id)
+        
+        #Limit results to 20
+        users = query.limit(20).all()
+        
+        return users
+    except Exception as e:
+        print(f"Error searching users: {e}")
+        return []
     finally:
         session.close()
