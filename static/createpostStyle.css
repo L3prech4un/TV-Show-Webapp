@@ -95,12 +95,14 @@ input[type="checkbox"] {
     height: 18px;
 }
 
+/* Spoiler Box */
 .spoiler-row {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
+/*Creatwe Post Button*/
 button {
     padding: 0.9rem;
     background: var(--clr-primary);

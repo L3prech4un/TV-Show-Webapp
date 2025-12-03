@@ -4,8 +4,9 @@
         <title>Feed - Streamline</title>
         <link rel="stylesheet" href="/static/feedStyle.css">
     </head>
-
     <body>
+
+        <!--Navigation Bar-->
         <navbar>
             <ul class ="nav-list">
                 <li class ="nav-item">
@@ -31,19 +32,25 @@
             </ul>
         </navbar>
 
+        <!-- Feed Section -->
         <div class="feed-container">
             <div class="feed-box">
                 <h2>My Feed</h2>
             </div>
+
+            <!--Posts-->
             {% if posts %}
                 {% for post in posts %}
                     {% if post.spoiler %}
                         <div class="post-box">
                             <h2>{{post.media_title}} |  {{post.post_title}}</h2>
+                            
                             <div>
                                 <p>Posted By: {{post.username}}</p>
                                 <p>Posted On: {{post.post_date}}</p>
                             </div>
+
+                             <!-- Spoiler Section -->
                             <div class ="spoilers">
                                 <input type="checkbox" id="spoiler-{{ post.postid }}" class="spoiler-control">
                                 <label for="spoiler-{{ post.postid }}" class="spoiler-block">Click to Reveal Spoiler</label>
@@ -52,11 +59,13 @@
                                 <p>{{post.post_content}}</p>
 
                                 {% if post.userid|string == request.cookies.get('userloggedin')|string %}
+                                <!-- Delete Post -->
                                 <form method="POST">
                                     <input type="hidden" name="deletepostid" value="{{ post.postid }}">
-                                    <button type="submit">Delete Post</button>
+                                    <button type="submit" class="delete-post-btn">Delete Post</button>
                                 </form>
                                 {% endif %}
+                                <!-- Comments Section -->
                                 <div class="comments">
                                     {% set comments = getPostComments(post.postid) %}
                                     {% if comments %}
@@ -64,6 +73,7 @@
                                             <div class="comment">
                                                 <p><strong>{{ comment.username }}</strong>: {{ comment.comment_content }}</p>
                                                 {% if comment.userid|string == request.cookies.get('userloggedin')|string %}
+                                                <!--Delete Comment-->
                                                 <form method="POST" action="/delete_comment/{{ comment.commentid }}">
                                                     <button type="submit" class="delete-comment-btn">Delete</button>
                                                 </form>
@@ -74,6 +84,7 @@
                                         <p>No one has commented yet.</p>
                                     {% endif %}
 
+                                    <!--Add Comment-->
                                     <form method="POST">
                                         <input type="hidden" name="postid" value="{{post.postid}}">
                                         <input class="make-comment" type="text" name="content" placeholder="Add a comment" required>
@@ -84,6 +95,8 @@
                             </div>
                         </div>
                     {% else %}
+
+                    <!--Non-Spoiler Section-->
                         <div class="post-box">
                             <h2>{{post.media_title}} | {{post.post_title}}</h2>
                             <div>
@@ -94,11 +107,15 @@
                             <p>{{post.post_content}}</p>
 
                             {% if post.userid|string == request.cookies.get('userloggedin')|string %}
+
+                            <!--Delete Post-->
                             <form method="POST">
                                 <input type="hidden" name="deletepostid" value="{{ post.postid }}">
-                                <button type="submit">Delete Post</button>
+                                <button type="submit" class="delete-post-btn">Delete Post</button>
                             </form>
                             {% endif %}
+
+                            <!--Comments-->
                             <div class="comments">
                                 {% set comments = getPostComments(post.postid) %}
                                 {% if comments %}
@@ -106,6 +123,7 @@
                                         <div class="comment">
                                             <p><strong>{{ comment.username }}</strong>: {{ comment.comment_content }}</p>
                                             {% if comment.userid|string == request.cookies.get('userloggedin')|string %}
+                                            <!--Delete Comment-->
                                             <form method="POST" action="/delete_comment/{{ comment.commentid }}">
                                                 <button type="submit" class="delete-comment-btn">Delete</button>
                                             </form>
@@ -116,6 +134,7 @@
                                     <p>No one has commented yet.</p>
                                 {% endif %}
 
+                                <!--Add Comment-->
                                 <form method="POST">
                                     <input type="hidden" name="postid" value="{{post.postid}}">
                                     <input class="make-comment" type="text" name="content" placeholder="Add a comment" required>
@@ -130,6 +149,8 @@
             <p>No posts to display</p>
             {% endif %}
         </div>
+
+        <!-- Create Post Button -->
         <a href="/create_post"><button class="create-button">Create Post</button></a>
     </body>
 </html>
