@@ -43,11 +43,11 @@ def create_dummy_data():
         session.flush()  
 
         posts = [
-            Post(MediaID=shows[0].MediaID, Title="Love Stranger Things!", Date="2025-10-30", Content="Best show ever!", Spoiler=False),  
-            Post(MediaID=shows[1].MediaID, Title="Matrix Review", Date="2025-10-29", Content="Classic movie", Spoiler=True),           
-            Post(MediaID=shows[2].MediaID, Title="BB Thoughts", Date="2025-10-28", Content="Just finished Breaking Bad", Spoiler=True),  
-            Post(MediaID=shows[3].MediaID, Title="Geralt Forever!", Date="2025-10-27", Content="The Witcher rocks!", Spoiler=False),    
-            Post(MediaID=shows[4].MediaID, Title="Mind Blown!", Date="2025-10-26", Content="Inception is a masterpiece!", Spoiler=True) 
+            Post(MediaID=shows[0].MediaID, Title="Love Stranger Things!", Date="2025-10-30", Content="Best show ever!", Spoiler=False, Rating=4),  
+            Post(MediaID=shows[1].MediaID, Title="Matrix Review", Date="2025-10-29", Content="Classic movie", Spoiler=True, Rating=2),           
+            Post(MediaID=shows[2].MediaID, Title="BB Thoughts", Date="2025-10-28", Content="Just finished Breaking Bad", Spoiler=True, Rating=1),  
+            Post(MediaID=shows[3].MediaID, Title="Geralt Forever!", Date="2025-10-27", Content="The Witcher rocks!", Spoiler=False, Rating=3),    
+            Post(MediaID=shows[4].MediaID, Title="Mind Blown!", Date="2025-10-26", Content="Inception is a masterpiece!", Spoiler=True, Rating=4) 
         ]
         session.add_all(posts)
         session.flush()  

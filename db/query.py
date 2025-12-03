@@ -68,7 +68,8 @@ def getFeed(userid: int) -> list:
         query = text(
             """
             SELECT U2."UserID" AS userid, U2."UName" AS username, P1."PostID" AS postid, P1."Title" AS post_title, 
-                P1."Date" AS post_date, P1."Content" AS post_content, TV1."Title" AS media_title, P1."Spoiler" As spoiler
+                P1."Date" AS post_date, P1."Content" AS post_content, TV1."Title" AS media_title, TV1."MediaID" AS mediaid,
+                P1."Spoiler" As spoiler, P1."Rating" AS rating
             FROM "user" U1
             JOIN "follows" F ON U1."UserID" = F."UserID"
             JOIN "user" U2 ON F."FollowerID" = U2."UserID"
@@ -80,7 +81,8 @@ def getFeed(userid: int) -> list:
             UNION
 
             SELECT U3."UserID" AS userid, U3."UName" AS username, P2."PostID" AS postid, P2."Title" AS post_title,
-                P2."Date" AS post_date, P2."Content" AS post_content, TV2."Title", P2."Spoiler" AS spoiler
+                P2."Date" AS post_date, P2."Content" AS post_content, TV2."Title", TV2."MediaID" AS mediaid,
+                P2."Spoiler" AS spoiler, P2."Rating" AS rating
             FROM "user" U3
             JOIN "creates" C2 ON U3."UserID" = C2."UserID"
             JOIN "post" P2 ON C2."PostID" = P2."PostID"
@@ -148,7 +150,7 @@ def getTitles(userid: int, table: str, titlename: str) -> list:
     finally:
         session.close()
 
-def createPost(userid: int, mediaid: int, title: str, content: str, spoiler: bool) -> None:
+def createPost(userid: int, mediaid: int, title: str, content: str, spoiler: bool, rating: int) -> None:
     """Creates a post to add to the database"""
     session = get_session()
     try:
@@ -156,7 +158,8 @@ def createPost(userid: int, mediaid: int, title: str, content: str, spoiler: boo
                     Title = title,
                     Date = datetime.now().today().strftime("%Y-%m-%d"),
                     Content = content,
-                    Spoiler = spoiler)
+                    Spoiler = spoiler,
+                    Rating = rating)
         session.add(post)
         session.flush()
 
@@ -436,5 +439,71 @@ def deleteComment(comment_id: int, user_id: int) -> bool:
         session.rollback()
         print(f"Error deleting comment: {e}")
         return False
+    finally:
+        session.close()
+
+def checkFollowing(userid:int, otheruserid:int) -> bool:
+    """Check if a user is following another user"""
+    session = get_session()
+
+    try:
+        query = text(
+            f"""
+            SELECT 1
+            FROM "follows"
+            WHERE "UserID" = :userid
+            AND "FollowerID" = :otheruserid
+            """
+        )
+        result = session.execute(query, {"userid": userid,"otheruserid": otheruserid}).first()
+        return result is not None
+    except Exception as e:
+        session.rollback()
+        print(f"Error checking following: {e}")
+        return False
+    finally:
+        session.close()
+
+def getMediaInfo(mediaid:int):
+    """Get all information about a given media"""
+    session = get_session()
+    
+    try:
+        query = text(
+            f"""
+            SELECT "Title" AS media_title, "Genre" AS media_genre, "Year" AS media_year, "Type" AS media_type
+            FROM "tvmovie"
+            WHERE "MediaID" = :mediaid
+            """
+        )
+        result = session.execute(query, {"mediaid": mediaid}).fetchone()
+        
+        return result
+    except Exception as e:
+        session.rollback()
+        print(f"Error getting media info: {e}")
+    finally:
+        session.close()
+
+def getMediaPosts(mediaid:int) -> list:
+    """Get all posts for a given media"""
+    session = get_session()
+    try:
+        query = text(
+            f"""
+            SELECT U."UserID" AS userid, U."UName" AS username, P."PostID" AS postid, P."Title" AS post_title, 
+                P."Date" AS post_date, P."Content" AS post_content, TV."Title" AS media_title, P."Spoiler" AS spoiler, P."Rating" AS rating
+            FROM "tvmovie" TV
+            JOIN "post" P ON TV."MediaID" = P."MediaID"
+            JOIN "creates" C ON P."PostID" = C."PostID"
+            JOIN "user" U ON C."UserID" = U."UserID"
+            WHERE TV."MediaID" = :mediaid
+            """
+        )
+        posts = session.execute(query, {"mediaid": mediaid}).mappings().all()
+        return [dict(row) for row in posts]
+    except Exception as e:
+        session.rollback()
+        print(f"Error getting media posts: {e}")
     finally:
         session.close()

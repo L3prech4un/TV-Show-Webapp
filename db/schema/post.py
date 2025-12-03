@@ -14,6 +14,7 @@ class Post(Base):
     Date = Column(String(40))
     Content = Column(String(250))
     Spoiler = Column(Boolean)
+    Rating = Column(Integer)
 
     # create relationship with user table. assoc table name = Creates
     User = relationship('User', secondary = Creates, back_populates = 'Post')
