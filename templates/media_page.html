@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Feed - Streamline</title>
-        <link rel="stylesheet" href="/static/indexStyle.css">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{  media.media_title  }} - Streamline</title>
+  <link rel="stylesheet" href="/static/indexStyle.css" />
         <style>
             .spoiler-content {
                 display: none;
@@ -37,48 +39,66 @@
             }
 
         </style>
-    </head>
+</head>
     <body>
         <navbar>
-            <ul class ="nav-list">
-                <li class ="nav-item">
-                <a href="/">
-                    <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
-                </a>
-                </li>
-                <li class ="nav-item">
-                <a href="/discover">Discover</a>
-                </li>
-                <li class ="nav-item"> 
-                <a href="/my_profile">My Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/about">About</a>
-                </li>
-                {% if not userid %}
-                <li class ="nav-item">
-                    <a href="/login">Login</a>
-                </li>
-                <li class ="nav-item">
-                    <a href="/signup">Sign Up</a>
-                </li>
-                {% else %}
-                <li class ="nav-item">
-                    <a href="/logout">Logout</a>
-                </li>
-                {% endif %}
-            </ul>
-        </navbar>
+        <ul class ="nav-list">
+            <li class ="nav-item">
+            <a href="/">
+                <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+            </a>
+            </li>
+            <li class ="nav-item">
+            <a href="/discover">Discover</a>
+            </li>
+            <li class ="nav-item">
+            <a href="/my_feed">My Feed</a>
+            </li>
+            <li class ="nav-item"> 
+            <a href="/my_profile">My Profile</a>
+            </li>
+            <li class="nav-item">
+            <a href="/about">About</a>
+            </li>
+            {% if not userid %}
+            <li class ="nav-item">
+                <a href="/login">Login</a>
+            </li>
+            <li class ="nav-item">
+                <a href="/signup">Sign Up</a>
+            </li>
+            {% else %}
+            <li class ="nav-item">
+                <a href="/logout">Logout</a>
+            </li>
+            {% endif %}
+        </ul>
+    </navbar>
 
+        <div class="media-info">
+            <h1 class="media-title">{{media.media_title}}</h1>
+            <h2 class="media-rating">
+                Overall Rating:
+                {% if averagerating == 1 %}
+                    480p
+                {% elif averagerating == 2 %}
+                    780p
+                {% elif averagerating == 3 %}
+                    1080p
+                {% elif averagerating == 4 %}
+                    4K
+                {% endif %}
+            </h2>
+            <h3 class="media-info">{{media.media_genre}} | {{media.media_year}} | {{media.media_type}}</h3>
+            <hr>
+        </div>
+        <h2>Posts</h2>
         <div class="feed-container">
-            <div class="feed-box">
-                <h2>My Feed</h2>
-            </div>
             {% if posts %}
                 {% for post in posts %}
                     {% if post.spoiler %}
                         <div class="post-box">
-                            <h2><a href="{{ url_for('media_page', media_id=post.mediaid)}}">{{post.media_title}}</a> | 
+                            <h3>{{post.media_title}} | 
                                 {{post.post_title}} | Rating: 
                                 <b>
                                 {% if post.rating == 1 %}
@@ -87,11 +107,11 @@
                                     780p
                                 {% elif post.rating == 3 %}
                                     1080p
-                                {% elif post.rating == 4 %}
+                                {% elif post.rating == 4 %} 
                                     4K
                                 {% endif %}
                                 </b>
-                            </h2>
+                            </h3>
                             <div>
                                 {% if post.userid == userid %}
                                     <p>Posted By: <a href="{{ url_for('my_profile') }}">{{post.username}}</a></p>
@@ -141,7 +161,7 @@
 
                                     <form method="POST">
                                         <input type="hidden" name="postid" value="{{post.postid}}">
-                                        <input class="make-comment" type="text" name="content" placeholder="Add a comment" maxlength="100" required >
+                                        <input class="make-comment" type="text" name="content" placeholder="Add a comment" maxlength="100" required>
                                         <button class="comment-button" type="submit">Post Comment</button>
                                     </form>
                                 </div>
@@ -150,7 +170,7 @@
                         </div>
                     {% else %}
                         <div class="post-box">
-                            <h2><a href="{{ url_for('media_page', media_id=post.mediaid)}}">{{post.media_title}}</a> | 
+                            <h3>{{post.media_title}} | 
                                 {{post.post_title}} | Rating: 
                                 <b>
                                 {% if post.rating == 1 %}
@@ -163,7 +183,7 @@
                                     4K
                                 {% endif %}
                                 </b>
-                            </h2>
+                            </h3>
                             <div>
                                 {% if post.userid == userid %}
                                     <p>Posted By: <a href="{{ url_for('my_profile') }}">{{post.username}}</a></p>
@@ -221,6 +241,6 @@
             <p>No posts to display</p>
             {% endif %}
         </div>
-        <a href="/create_post"><button class="create-button">Create Post</button></a>
     </body>
+  </section>
 </html>
