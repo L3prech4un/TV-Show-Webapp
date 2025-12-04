@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{  username  }} Profile - Streamline</title>
+  <link rel="stylesheet" href="/static/indexStyle.css" />
+</head>
+  <body>
+    <navbar>
+      <ul class ="nav-list">
+        <li class ="nav-item">
+          <a href="/">
+            <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+          </a>
+        </li>
+        <li class ="nav-item">
+          <a href="/discover">Discover</a>
+        </li>
+        <li class ="nav-item">
+          <a href="/my_feed">My Feed</a>
+        </li>
+        <li class ="nav-item"> 
+          <a href="/my_profile">My Profile</a>
+        </li>
+        <li class="nav-item">
+          <a href="/about">About</a>
+        </li>
+        {% if not userid %}
+          <li class ="nav-item">
+            <a href="/login">Login</a>
+          </li>
+          <li class ="nav-item">
+            <a href="/signup">Sign Up</a>
+          </li>
+        {% else %}
+          <li class ="nav-item">
+            <a href="/logout">Logout</a>
+          </li>
+        {% endif %}
+      </ul>
+    </navbar>
+
+    <div class="profile">
+      <h1>{{ username }}</h1>
+    </div>
+
+    {% if following %}
+      <button class="unfollow-btn" onclick="unfollowUser('{{ otheruserid }}')">Unfollow</button>
+    {% else %}
+        <button class="follow-btn" onclick="followUser('{{ otheruserid }}')">Follow</button>
+    {% endif %}
+
+    <section class="profile-sections">
+      <div class="watch-section">
+        <h3>Currently Watching</h3>
+        {% if watching %}
+          <ul>
+            {% for watching_title in watching %}
+            <li>
+              {{ watching_title }}
+            </li>
+            {% endfor %}
+          </ul>
+      </div>
+        {% else %}
+          <p>{{ username }} does not have anything in what they are watching.</p>
+        {% endif %}
+      </div>
+
+      <div class="watch-section">
+        <h3>Watched</h3>
+        {% if watched %}
+          <ul>
+            {% for watched_title in watched %}
+            <li>
+              {{ watched_title }}
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>{{ username }} does not have anything in what they have watched.</p>
+        {% endif %}
+      </div>
+
+      <div class="watch-section">
+        <h3>Watchlist</h3>
+        {% if watchlist %}
+          <ul>
+            {% for watchlist_title in watchlist %}
+            <li>
+              {{ watchlist_title }}
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>{{ username }} does not have anything in their watchlist.</p>
+        {% endif %}
+      </div>
+    </section>
+  </body>
+  <script>
+        function followUser(userId) {
+            fetch(`/follow/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User followed successfully!');
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error); 
+                alert('Error following user');
+            });
+        }
+
+        function unfollowUser(userId) {
+            if (!confirm('Are you sure you want to unfollow this user?')) {
+                return;
+            }
+            
+            fetch(`/unfollow/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User unfollowed successfully!');
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error unfollowing user');
+            });
+        }
+    </script>
+</html>
