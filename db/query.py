@@ -533,3 +533,30 @@ def getMediaPosts(mediaid:int) -> list:
         print(f"Error getting media posts: {e}")
     finally:
         session.close()
+
+def search_users(search_term: str, current_user_id: int = None) -> list:
+    """Search for users by username, first name, or last name"""
+    session = get_session()
+    try:
+        from db.schema.user import User  
+        
+        search_pattern = f"%{search_term}%"
+        
+        query = session.query(User).filter(
+            or_(
+                User.UName.ilike(search_pattern),
+                User.FName.ilike(search_pattern),
+                User.LName.ilike(search_pattern)
+            )
+        )
+        
+        if current_user_id:
+            query = query.filter(User.UserID != current_user_id)
+        
+        #Limit results to 20
+        users = query.limit(20).all()
+        
+        return users
+    except Exception as e:
+        print(f"Error searching users: {e}")
+        return []
