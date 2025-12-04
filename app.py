@@ -449,6 +449,45 @@ def create_app():
         loggedinuser = request.cookies.get('userloggedin')
         return userCache.get(loggedinuser)
     
+    # Error handling
+    def _tail_log(path, max_lines=80):
+        try:
+            with open(path, 'rb') as f:
+                data = f.read()
+            text = data.decode('utf-8', errors='replace')
+            lines = text.splitlines()
+            tail_lines = lines[-max_lines:]
+            return "\n".join(tail_lines)
+        except Exception:
+            return None
+
+    LOG_PATH = os.path.join(os.getcwd(), 'logs', 'log.txt')
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        details = _tail_log(LOG_PATH, max_lines=40)
+        return render_template('error.html', title='Page Not Found', message='The requested page was not found.', code=404, details=details), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        exc_str = None
+        try:
+            exc_str = str(error)
+        except Exception:
+            exc_str = None
+        log_tail = _tail_log(LOG_PATH, max_lines=120)
+        details_parts = []
+        if exc_str:
+            details_parts.append(f"Exception: {exc_str}")
+        if log_tail:
+            details_parts.append("Recent log entries:\n" + log_tail)
+        details = "\n\n".join(details_parts) if details_parts else None
+        return render_template('error.html', title='Server Error', message='An internal server error occurred.', code=500, details=details), 500
+
+    @app.route('/trigger-error')
+    def trigger_error():
+        raise RuntimeError('This is a test error for the error page')
+
     @app.route('/search_users', methods=['GET', 'POST'])
     def search_users():
         """Search for users page"""
