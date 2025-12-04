@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Feed - Streamline</title>
-        <link rel="stylesheet" href="/static/indexStyle.css">
-
+        <link rel="stylesheet" href="/static/feedStyle.css">
     </head>
     <body>
+
+        <!--Navigation Bar-->
         <navbar>
             <ul class ="nav-list">
                 <li class ="nav-item">
@@ -14,68 +15,185 @@
                 </a>
                 </li>
                 <li class ="nav-item">
-                    <a href="/discover">Discover</a>
+                <a href="/discover">Discover</a>
                 </li>
-                <li class ="nav-item">
-                    <a href="/my_profile">My Profile</a>
+                <li class ="nav-item"> 
+                <a href="/my_profile">My Profile</a>
                 </li>
                 <li class="nav-item">
                     <a href="/about">About</a>
                 </li>
+                {% if not userid %}
                 <li class ="nav-item">
                     <a href="/login">Login</a>
                 </li>
                 <li class ="nav-item">
                     <a href="/signup">Sign Up</a>
                 </li>
+                {% else %}
+                <li class ="nav-item">
+                    <a href="/logout">Logout</a>
+                </li>
+                {% endif %}
             </ul>
         </navbar>
 
+        <!-- Feed Section -->
         <div class="feed-container">
             <div class="feed-box">
                 <h2>My Feed</h2>
             </div>
+
+            <!--Posts-->
             {% if posts %}
                 {% for post in posts %}
-                <div class="post-box">
-                    <h2>{{post.media_title}} | {{post.post_title}}</h2>
-                    <div>
-                        <p>Posted By: {{post.username}}</p>
-                        <p>Posted On: {{post.post_date}}</p>
-                    </div>
-
-                    <p>{{post.post_content}}</p>
-
-                    {% if post.userid|string == request.cookies.get('userloggedin')|string %}
-                    <form method="POST">
-                        <input type="hidden" name="deletepostid" value="{{ post.postid }}">
-                        <button type="submit">Delete Post</button>
-                    </form>
-                    {% endif %}
-                    <div class="comments">
-                        {% set comments = getPostComments(post.postid) %}
-                        {% if comments %}
-                            {% for comment in comments %}
-                            <div class="comment">
-                                <p><strong>{{ comment.username }}</strong>: {{ comment.comment_content }}</p>
+                    {% if post.spoiler %}
+                        <div class="post-box">
+                            <h2><a href="{{ url_for('media_page', media_id=post.mediaid)}}">{{post.media_title}}</a> | 
+                                {{post.post_title}} | Rating: 
+                                <b>
+                                {% if post.rating == 1 %}
+                                    480p
+                                {% elif post.rating == 2 %}
+                                    780p
+                                {% elif post.rating == 3 %}
+                                    1080p
+                                {% elif post.rating == 4 %}
+                                    4K
+                                {% endif %}
+                                </b>
+                            </h2>
+                            <div>
+                                {% if post.userid == userid %}
+                                    <p>Posted By: <a href="{{ url_for('my_profile') }}">{{post.username}}</a></p>
+                                {% else %}
+                                    <p>Posted By: <a href="{{ url_for('other_user_profile', user_id=post.userid) }}">{{post.username}}</a></p>
+                                {% endif %}
+                                <p>Posted On: {{post.post_date}}</p>
                             </div>
-                            {% endfor %}
-                        {% else %}
-                            <p>No one has commented yet.</p>
-                        {% endif %}
+                            <div class ="spoilers">
+                                <input type="checkbox" id="spoiler-{{ post.postid }}" class="spoiler-control">
+                                <label for="spoiler-{{ post.postid }}" class="spoiler-block">Click to Reveal Spoiler</label>
 
-                        <form method="POST">
-                            <input type="hidden" name="postid" value="{{post.postid}}">
-                            <input class="make-comment" type="text" name="content" placeholder="Add a comment" required>
-                            <button class="comment-button" type="submit">Post Comment</button>
-                        </form>
-                    </div>
-                </div>
+                                <div class="spoiler-content">
+                                <p>{{post.post_content}}</p>
+
+                                {% if post.userid == userid %}
+                                <form method="POST">
+                                    <input type="hidden" name="deletepostid" value="{{ post.postid }}">
+                                    <button type="submit">Delete Post</button>
+                                </form>
+                                {% endif %}
+                                <div class="comments">
+                                    {% set comments = getPostComments(post.postid) %}
+                                    {% if comments %}
+                                        {% for comment in comments %}
+                                            <div class="comment">
+                                                <p>
+                                                    <strong>
+                                                    {% if comment.userid == userid %}
+                                                        <a href="{{ url_for('my_profile') }}">{{ comment.username }}</a>
+                                                    {% else %}
+                                                        <a href="{{ url_for('other_user_profile', user_id=comment.userid) }}">{{ comment.username }}</a>
+                                                    {% endif %}
+                                                    </strong>
+                                                    : {{ comment.comment_content }}
+                                                </p>
+                                                {% if comment.userid == userid %}
+                                                <form method="POST" action="/delete_comment/{{ comment.commentid }}">
+                                                    <button type="submit" class="delete-comment-btn">Delete</button>
+                                                </form>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>No one has commented yet.</p>
+                                    {% endif %}
+
+                                    <form method="POST">
+                                        <input type="hidden" name="postid" value="{{post.postid}}">
+                                        <input class="make-comment" type="text" name="content" placeholder="Add a comment" maxlength="100" required >
+                                        <button class="comment-button" type="submit">Post Comment</button>
+                                    </form>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="post-box">
+                            <h2><a href="{{ url_for('media_page', media_id=post.mediaid)}}">{{post.media_title}}</a> | 
+                                {{post.post_title}} | Rating: 
+                                <b>
+                                {% if post.rating == 1 %}
+                                    480p
+                                {% elif post.rating == 2 %}
+                                    780p
+                                {% elif post.rating == 3 %}
+                                    1080p
+                                {% elif post.rating == 4 %}
+                                    4K
+                                {% endif %}
+                                </b>
+                            </h2>
+                            <div>
+                                {% if post.userid == userid %}
+                                    <p>Posted By: <a href="{{ url_for('my_profile') }}">{{post.username}}</a></p>
+                                {% else %}
+                                    <p>Posted By: <a href="{{ url_for('other_user_profile', user_id=post.userid) }}">{{post.username}}</a></p>
+                                {% endif %}
+                                <p>Posted On: {{post.post_date}}</p>
+                            </div>
+
+                            <p>{{post.post_content}}</p>
+
+                            {% if post.userid == userid %}
+                            <form method="POST">
+                                <input type="hidden" name="deletepostid" value="{{ post.postid }}">
+                                <button type="submit">Delete Post</button>
+                            </form>
+                            {% endif %}
+                            <div class="comments">
+                                {% set comments = getPostComments(post.postid) %}
+                                {% if comments %}
+                                    {% for comment in comments %}
+                                        <div class="comment">
+                                            <p>
+                                                <strong>
+                                                {% if comment.userid == userid %}
+                                                    <a href="{{ url_for('my_profile') }}">{{ comment.username }}</a>
+                                                {% else %}
+                                                    <a href="{{ url_for('other_user_profile', user_id=comment.userid) }}">{{ comment.username }}</a>
+                                                {% endif %}
+                                                </strong>
+                                                : {{ comment.comment_content }}
+                                            </p>
+                                            {% if comment.userid == userid %}
+                                            <form method="POST" action="/delete_comment/{{ comment.commentid }}">
+                                                <button type="submit" class="delete-comment-btn">Delete</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No one has commented yet.</p>
+                                {% endif %}
+
+                                <form method="POST">
+                                    <input type="hidden" name="postid" value="{{post.postid}}">
+                                    <input class="make-comment" type="text" name="content" placeholder="Add a comment" maxlength="100" required>
+                                    <button class="comment-button" type="submit">Post Comment</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                
                 {% endfor %}
             {% else %}
             <p>No posts to display</p>
             {% endif %}
         </div>
+
+        <!-- Create Post Button -->
         <a href="/create_post"><button class="create-button">Create Post</button></a>
     </body>
 </html>

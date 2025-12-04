@@ -2,119 +2,44 @@
 <html>
 <head>
     <title>Discover People - Streamline</title>
-    <link rel="stylesheet" href="/static/signupStyle.css">
-    <style>
-        .discover-container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        
-        .section {
-            background: white;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 0.2rem;
-            box-shadow: 0px 0px 10px #cfd8dc;
-        }
-        
-        .section h2 {
-            color: #6aeeb5;
-            border-bottom: 2px solid #6aeeb5;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .user-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .user-card {
-            background: #f0f7f8;
-            padding: 1rem;
-            border-radius: 0.2rem;
-            border: 1px solid #cfd8dc;
-        }
-        
-        .user-info h4 {
-            margin: 0 0 0.5rem 0;
-            color: #333;
-        }
-        
-        .user-info p {
-            margin: 0 0 1rem 0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .follow-btn, .unfollow-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.2rem;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        
-        .follow-btn {
-            background: #6aeeb5;
-            color: white;
-        }
-        
-        .follow-btn:hover {
-            background: #29e6a7;
-        }
-        
-        .unfollow-btn {
-            background: #ff6b6b;
-            color: white;
-        }
-        
-        .unfollow-btn:hover {
-            background: #ff5252;
-        }
-        
-        .empty-message {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 2rem;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/discoverStyle.css">
 </head>
 <body>
+    <!--Navigation Bar-->
     <navbar>
-        <ul class="nav-list">
-            <li class="nav-item">
-                <a href="/">
-                    <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
-                </a>
+        <ul class ="nav-list">
+            <li class ="nav-item">
+            <a href="/">
+                <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+            </a>
             </li>
-            <li class="nav-item">
+            <li class ="nav-item">
                 <a href="/my_feed">My Feed</a>
             </li>
-            <li class="nav-item">
-                <a href="/discover" class="active">Discover</a>
-            </li>
-            <li class="nav-item">
+            <li class ="nav-item"> 
                 <a href="/my_profile">My Profile</a>
             </li>
             <li class="nav-item">
                 <a href="/about">About</a>
             </li>
-            <li class="nav-item">
+            {% if not userid %}
+            <li class ="nav-item">
                 <a href="/login">Login</a>
             </li>
-            <li class="nav-item">
+            <li class ="nav-item">
                 <a href="/signup">Sign Up</a>
             </li>
+            {% else %}
+            <li class ="nav-item">
+                <a href="/logout">Logout</a>
+            </li>
+            {% endif %}
         </ul>
     </navbar>
 
+    
     <div class="discover-container">
+        <!--Suggested Section-->
         <div class="section">
             <h2>Suggested Users</h2>
             {% if suggested_users %}
@@ -136,6 +61,7 @@
             {% endif %}
         </div>
 
+        <!--Following Section-->
         <div class="section">
             <h2>Following ({{ following|length }})</h2>
             {% if following %}
@@ -157,6 +83,7 @@
             {% endif %}
         </div>
 
+        <!--Followers Section-->
         <div class="section">
             <h2>Followers ({{ followers|length }})</h2>
             {% if followers %}

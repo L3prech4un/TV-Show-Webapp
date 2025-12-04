@@ -4,133 +4,137 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Profile - Streamline</title>
-  <link rel="stylesheet" href="/static/indexStyle.css" />
+  <link rel="stylesheet" href="/static/profileStyle.css" />
 </head>
-
+<body>
   <navbar>
-        <ul class ="nav-list">
-            <li class ="nav-item">
-            <a href="/">
-                <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
-            </a>
-            </li>
-            <li class ="nav-item">
-                <a href="/discover">Discover</a>
-            </li>
-            <li class="nav-item">
-                <a href="/search_users">Search Users</a>
-            </li>
-            <li class="nav-item">
-                <a href="/my_feed">My Feed</a>
-            </li>
-            <li class="nav-item">
-                <a href="/about">About</a>
-            </li>
-            <li class ="nav-item">
-                <a href="/login">Login</a>
-            </li>
-            <li class ="nav-item">
-                <a href="/signup">Sign Up</a>
-            </li>
-        </ul>
-        </navbar>
-
-  <div class="profile">
-    <h1>{{ username }}</h1>
-  </div>
-
-  <section class="profile-sections">
-    <div class="watch-section">
-      <h3>Currently Watching</h3>
-      {% if watching %}
-        <ul>
-          {% for watching_title in watching %}
-          <li>{{ watching_title }}
-            <form method="post" action="/remove_from_currently_watching" style="display:inline;">
-              <input type="hidden" name="title" value="{{ watching_title }}">
-              <button type="submit" class="remove-btn">Remove</button>
-            </form>
-          </li>
-          {% endfor %}
-        </ul>
+    <ul class ="nav-list">
+      <li class ="nav-item">
+        <a href="/">
+          <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+        </a>
+      </li>
+      <li class ="nav-item">
+        <a href="/discover">Discover</a>
+      </li>
+      <li class ="nav-item">
+        <a href="/my_feed">My Feed</a>
+      </li>
+      <li class="nav-item">
+        <a href="/about">About</a>
+      </li>
+      {% if not userid %}
+        <li class ="nav-item">
+          <a href="/login">Login</a>
+        </li>
+        <li class ="nav-item">
+          <a href="/signup">Sign Up</a>
+        </li>
       {% else %}
-        <p>You have not added anything to what you are watching.</p>
+        <li class ="nav-item">
+          <a href="/logout">Logout</a>
+        </li>
       {% endif %}
-    </div>
-    
-    <div class="add-currently-watching-form">
-      <form method="post" action="/add_to_currently_watching">
-        <label for="mediaid">Select the show you're currently watching:</label>
-        <select name="mediaid" id="mediaid" required>
-          <option value="">Select Your Media</option>
-          {% for media in tvmovies %}
-            <option value="{{ media.MediaID }}">{{ media.Title }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit" class="add-btn">Add to Currently Watching</button>
-      </form>
+    </ul>
+  </navbar>
+
+    <div class="profile">
+      <h1>{{ username }}</h1>
     </div>
 
-    <div class="watch-section">
-      <h3>Watched</h3>
-      {% if watched %}
-        <ul>
-          {% for watched_title in watched %}
-          <li>{{ watched_title }}
-            <form method="post" action="/remove_from_watched" style="display:inline;">
-              <input type="hidden" name="title" value="{{ watched_title }}">
-              <button type="submit" class="remove-btn">Remove</button>
-            </form>
-          </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>You have not added anything to what you have watched.</p>
-      {% endif %}
-    </div>
-
-    <div class="add-watched-form">
-      <form method="post" action="/add_to_watched">
-        <label for="mediaid">Select a show you watched:</label>
-        <select name="mediaid" id="mediaid" required>
-          <option value="">Select Your Media</option>
-          {% for media in tvmovies %}
-            <option value="{{ media.MediaID }}">{{ media.Title }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit" class="add-btn">Add to Watched</button>
-      </form>
-    </div>
-
-    <div class="watch-section">
-      <h3>Watchlist</h3>
-      {% if watchlist %}
-        <ul>
-          {% for watchlist_title in watchlist %}
-          <li>{{ watchlist_title }}
-             <form method="post" action="/remove_from_watchlist" style="display:inline;">
-                <input type="hidden" name="title" value="{{ watchlist_title }}">
+    <section class="profile-sections">
+      <div class="watch-section">
+        <h3>Currently Watching</h3>
+        {% if watching %}
+          <ul>
+            {% for watching_title in watching %}
+            <li>{{ watching_title }}
+              <form method="post" action="/remove_from_currently_watching" style="display:inline;">
+                <input type="hidden" name="title" value="{{ watching_title }}">
                 <button type="submit" class="remove-btn">Remove</button>
               </form>
-          </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>You have not added anything to your watchlist.</p>
-      {% endif %}
-    </div>
-
-    <div class="add-watchlist-form">
-        <form method="post" action="/add_to_watchlist">
-        <label for="mediaid">Select a show you want to watch:</label>
-        <select name="mediaid" id="mediaid" required>
-          <option value="">Select Your Media</option>
-          {% for media in tvmovies %}
-            <option value="{{ media.MediaID }}">{{ media.Title }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit" class="add-btn">Add to Watchlist</button>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>You have not added anything to what you are watching.</p>
+        {% endif %}
+      </div>
+      
+      <div class="add-currently-watching-form">
+        <form method="post" action="/add_to_currently_watching">
+          <label for="mediaid">Select the show you're currently watching:</label>
+          <select name="mediaid" id="mediaid" required>
+            <option value="">Select Your Media</option>
+            {% for media in tvmovies %}
+              <option value="{{ media.MediaID }}">{{ media.Title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="add-btn">Add to Currently Watching</button>
         </form>
-    </div>
-  </section>
+      </div>
+
+      <div class="watch-section">
+        <h3>Watched</h3>
+        {% if watched %}
+          <ul>
+            {% for watched_title in watched %}
+            <li>{{ watched_title }}
+              <form method="post" action="/remove_from_watched" style="display:inline;">
+                <input type="hidden" name="title" value="{{ watched_title }}">
+                <button type="submit" class="remove-btn">Remove</button>
+              </form>
+            </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>You have not added anything to what you have watched.</p>
+        {% endif %}
+      </div>
+
+      <div class="add-watched-form">
+        <form method="post" action="/add_to_watched">
+          <label for="mediaid">Select a show you watched:</label>
+          <select name="mediaid" id="mediaid" required>
+            <option value="">Select Your Media</option>
+            {% for media in tvmovies %}
+              <option value="{{ media.MediaID }}">{{ media.Title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="add-btn">Add to Watched</button>
+        </form>
+      </div>
+
+      <div class="watch-section">
+        <h3>Watchlist</h3>
+        {% if watchlist %}
+          <ul>
+            {% for watchlist_title in watchlist %}
+            <li>{{ watchlist_title }}
+              <form method="post" action="/remove_from_watchlist" style="display:inline;">
+                  <input type="hidden" name="title" value="{{ watchlist_title }}">
+                  <button type="submit" class="remove-btn">Remove</button>
+                </form>
+            </li>
+            {% endfor %} 
+          </ul>
+        {% else %}
+          <p>You have not added anything to your watchlist.</p>
+        {% endif %}
+      </div>
+
+      <div class="add-watchlist-form">
+          <form method="post" action="/add_to_watchlist">
+          <label for="mediaid">Select a show you want to watch:</label>
+          <select name="mediaid" id="mediaid" required>
+            <option value="">Select Your Media</option>
+            {% for media in tvmovies %}
+              <option value="{{ media.MediaID }}">{{ media.Title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="add-btn">Add to Watchlist</button>
+          </form>
+      </div>
+    </section>
+  </body>
 </html>
