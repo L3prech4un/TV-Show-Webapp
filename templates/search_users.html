@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Users - Streamline</title>
+    <link rel="stylesheet" href="/static/signupStyle.css">
+    <style>
+        .search-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .search-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.2rem;
+            box-shadow: 0px 0px 10px #cfd8dc;
+            margin-bottom: 2rem;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-form input[type="text"] {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #cfd8dc;
+            border-radius: 0.2rem;
+            font-size: 1rem;
+        }
+        
+        .search-form button {
+            padding: 0.75rem 1.5rem;
+            background: #6aeeb5;
+            color: white;
+            border: none;
+            border-radius: 0.2rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .search-form button:hover {
+            background: #29e6a7;
+        }
+        
+        .results-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.2rem;
+            box-shadow: 0px 0px 10px #cfd8dc;
+        }
+        
+        .user-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .user-card:last-child {
+            border-bottom: none;
+        }
+        
+        .user-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        
+        .user-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .follow-btn, .unfollow-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.2rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .follow-btn {
+            background: #6aeeb5;
+            color: white;
+        }
+        
+        .follow-btn:hover {
+            background: #29e6a7;
+        }
+        
+        .unfollow-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .unfollow-btn:hover {
+            background: #ff5252;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 2rem;
+        }
+        
+        .search-info {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <navbar>
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="/">
+                    <img src="/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/my_feed">My Feed</a>
+            </li>
+            <li class="nav-item">
+                <a href="/discover">Discover</a>
+            </li>
+            <li class="nav-item">
+                <a href="/search_users" class="active">Search Users</a>
+            </li>
+            <li class="nav-item">
+                <a href="/my_profile">My Profile</a>
+            </li>
+            <li class="nav-item">
+                <a href="/about">About</a>
+            </li>
+            <li class="nav-item">
+                <a href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a href="/signup">Sign Up</a>
+            </li>
+        </ul>
+    </navbar>
+
+    <div class="search-container">
+        <div class="search-box">
+            <h2>Search Users</h2>
+            <form method="POST" class="search-form">
+                <input type="text" name="search_term" placeholder="Search by username, first name, or last name..." 
+                       value="{{ search_term }}" required>
+                <button type="submit">Search</button>
+            </form>
+            
+            {% if search_term %}
+                <div class="search-info">
+                    Searching for: "{{ search_term }}"
+                    {% if search_results %}
+                        - Found {{ search_results|length }} user(s)
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        {% if search_term %}
+        <div class="results-section">
+            {% if search_results %}
+                {% for user in search_results %}
+                <div class="user-card">
+                    <div class="user-info">
+                        <h4>{{ user.UName }}</h4>
+                        <p>{{ user.FName }} {{ user.LName }}</p>
+                    </div>
+                    <div>
+                       {% if is_following(logged_in_user.UserID, user.UserID) %}
+                            <button class="unfollow-btn" onclick="unfollowUser('{{ user.UserID }}')">
+                                Unfollow
+                            </button>
+                        {% else %}
+                            <button class="follow-btn" onclick="followUser('{{ user.UserID }}')">
+                                Follow
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    No users found for "{{ search_term }}"
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function followUser(userId) {
+            fetch(`/follow/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User followed!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error following user');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error following user');
+            });
+        }
+
+        function unfollowUser(userId) {
+            if (!confirm('Unfollow this user?')) {
+                return;
+            }
+            
+            fetch(`/unfollow/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('User unfollowed!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error unfollowing user');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error unfollowing user');
+            });
+        }
+    </script>
+</body>
+</html>
