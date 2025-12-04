@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; TV-Show-Webapp 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Database Schema" href="database-schema.html" />
+    <link rel="prev" title="Development Guide" href="development.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<section id="database-query-functions">
+<h2>Database Query Functions<a class="headerlink" href="#database-query-functions" title="Link to this heading">¶</a></h2>
+<p>All database operations are handled through <cite>db/query.py</cite>. Key functions:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="get_User">
+<span class="sig-name descname"><span class="pre">get_User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">filters</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#get_User" title="Link to this definition">¶</a></dt>
+<dd><p>Get a single user by filters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Database table object</p></li>
+<li><p><strong>**filters</strong> – <p>Keyword arguments for filtering</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>User object or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="get_all">
+<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#get_all" title="Link to this definition">¶</a></dt>
+<dd><p>Get all records from a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>table</strong> – Database table object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of records</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="getFeed">
+<span class="sig-name descname"><span class="pre">getFeed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#getFeed" title="Link to this definition">¶</a></dt>
+<dd><p>Get feed posts for a user (posts from followed users + own posts).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>userid</strong> – User ID</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of post dictionaries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="createPost">
+<span class="sig-name descname"><span class="pre">createPost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediaid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#createPost" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new post.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>userid</strong> – User ID creating the post</p></li>
+<li><p><strong>mediaid</strong> – Media ID the post is about</p></li>
+<li><p><strong>title</strong> – Post title</p></li>
+<li><p><strong>content</strong> – Post content</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="follow_user">
+<span class="sig-name descname"><span class="pre">follow_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">follower_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#follow_user" title="Link to this definition">¶</a></dt>
+<dd><p>Follow another user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> – Current user ID</p></li>
+<li><p><strong>follower_id</strong> – User ID to follow</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Boolean indicating success</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="database-models">
+<h2>Database Models<a class="headerlink" href="#database-models" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt><strong>User Model</strong> (<cite>db/schema/user.py</cite>):</dt><dd><ul class="simple">
+<li><p>UserID (Primary Key)</p></li>
+<li><p>FName, LName, UName</p></li>
+<li><p>Email, PWord (hashed)</p></li>
+<li><p>Relationships: Post, Comment, TVMovie associations</p></li>
+</ul>
+</dd>
+<dt><strong>Post Model</strong> (<cite>db/schema/post.py</cite>):</dt><dd><ul class="simple">
+<li><p>PostID (Primary Key)</p></li>
+<li><p>MediaID (Foreign Key to TVMovie)</p></li>
+<li><p>Title, Date, Content</p></li>
+<li><p>Relationships: User, Comment, TVMovie</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="flask-routes">
+<h2>Flask Routes<a class="headerlink" href="#flask-routes" title="Link to this heading">¶</a></h2>
+<p>Main routes in <cite>app.py</cite>:</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">TV-Show-Webapp</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using Streamline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#database-query-functions">Database Query Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#database-models">Database Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flask-routes">Flask Routes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="database-schema.html">Database Schema</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="development.html" title="previous chapter">Development Guide</a></li>
+      <li>Next: <a href="database-schema.html" title="next chapter">Database Schema</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ethan Perez.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/api-reference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
