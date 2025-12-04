@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>{{ title | default('Error') }}</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<style>
+		body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#f6f7fb; color:#222; margin:0; }
+		.container { max-width:900px; margin:6rem auto; padding:1.5rem; }
+		.card { background:#fff; border-radius:8px; padding:2rem; box-shadow:0 6px 18px rgba(18,22,26,0.08); }
+		h1 { margin:0 0 .25rem; font-size:1.6rem; }
+		p.lead { margin:.5rem 0 1rem; color:#444; }
+		p.code { margin:0; font-weight:600; color:#c23; }
+		.details { margin-top:1rem; color:#666; white-space:pre-wrap; font-size:.95rem; }
+		.actions { margin-top:1.25rem; }
+		a.button { display:inline-block; padding:.5rem .9rem; background:#007bff; color:#fff; text-decoration:none; border-radius:6px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="card">
+			<h1>{{ title | default('Something went wrong') }}</h1>
+			{% if code %}<p class="code">Error {{ code }}</p>{% endif %}
+			<p class="lead">{{ message | default('An unexpected problem occurred. Please try again or return home.') }}</p>
+
+			{% if details %}
+				<div class="details"><strong>Details:</strong>
+					<div>{{ details }}</div>
+				</div>
+			{% endif %}
+
+			<div class="actions">
+				<a class="button" href="{{ url_for('index') }}">Return home</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
