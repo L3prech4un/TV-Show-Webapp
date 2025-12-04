@@ -2,9 +2,10 @@
 <html>
     <head>
         <title>Create Post - Streamline</title>
-        <link rel="stylesheet" href="/static/signupStyle.css">
+        <link rel="stylesheet" href="/static/createpostStyle.css">
     </head>
     <body>
+        <!--Navigation Bar to return to feed-->
         <navbar>
             <ul class ="nav-list">
                 <li class ="nav-item">
@@ -39,6 +40,7 @@
             </ul>
         </navbar>
 
+        <!-- Create Post Section -->
         <div>
             <h2>Create A New Post</h2>
             <form method="POST"> 
@@ -48,6 +50,14 @@
                     <option value="{{media.MediaID}}">{{ media.Title }}</option>
                     {% endfor %}
                 </select>
+
+                <input type="text" name="title" placeholder="Title Goes Here" required maxlength="40" pattern="^[a-zA-Z0-9_ ]+$">
+                <textarea name="content" placeholder="What do you want to say?" required maxlength="250" pattern="^[a-zA-Z0-9_ ]+$"></textarea>
+
+                <div class="spoiler-row">
+                    <label for="spoiler">Is it a spoiler?</label>
+                    <input type="checkbox" name="spoiler" id="spoiler">
+                </div>
                 <select name="rating">
                     <option value="">How would you rate it?</option>
                     <option value="1">480p </option>
@@ -62,5 +72,6 @@
                 <button type="submit">Create Post</button>
             </form>
         </div>
+
     </body>
 </html>

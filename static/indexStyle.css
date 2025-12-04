@@ -31,6 +31,9 @@ body {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .nav-item {
@@ -59,6 +62,153 @@ body {
 
 /* Logo Image Styling */
 .MiniLogo {
-    width: 50px;
-    height: auto;
+    width: 80px;
+    height: 80px;
 }
+
+/* Welcome Image Styling */
+.welcome-image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.welcome-image img {
+  width: 100%;
+  max-height: 500px; 
+  object-fit: cover; 
+}
+
+.welcome-text {
+  width: 100%;
+  background-color: #aff7d8;
+  text-align: center;
+  padding: 40px 0;   
+  box-sizing: border-box;
+}
+
+/*Main Title styling*/
+.welcome-text h1 {
+  margin: 0;
+  font-size: 50px;   
+  font-weight: bold;
+}
+
+/*Subtitle styling*/
+.welcome-text p {
+    margin-top: 10px;
+    font-size: 22px;
+    color: #333;
+    font-weight: 400;
+    font-family: "Poppins", "Roboto", sans-serif;
+    font-style: italic;
+}
+
+/* Content Section Styling */
+.content-section {
+  width: 80%;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border-radius: 12px;
+}
+
+.content-section h3 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--clr-primary);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.content-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.content-section li {
+  font-size: 20px;
+  padding: 8px 0;
+  color: #444;
+}
+
+
+/* Info Boxes Styling */
+.info-boxes {
+    width: 100%;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /*puts the boxes next to each other*/
+    gap: 25px;
+    padding: 20px;
+}
+
+/* Each individual box */
+.info-box {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-box h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: var(--clr-primary);
+    font-weight: 600;
+}
+
+.info-box p {
+    font-size: 20px;
+    color: #444;
+    line-height: 1.5;  
+}
+
+/* Suggestions Section Styling */
+.suggestions-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.suggestions-section h3 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--clr-primary);
+}
+
+.suggestion-boxes {
+  display: flex;
+  gap: 50px;
+}
+
+.suggestion-box {
+  width: 300px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.suggestion-box img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+}
+
+.suggestion-box p {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #161212;
+  font-weight: 600;
+}
+
+

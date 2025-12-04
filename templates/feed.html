@@ -2,43 +2,11 @@
 <html lang="en">
     <head>
         <title>Feed - Streamline</title>
-        <link rel="stylesheet" href="/static/indexStyle.css">
-        <style>
-            .spoiler-content {
-                display: none;
-            }
-
-            .spoiler-control {
-                display: none;
-            }
-
-            .spoiler-control:checked ~ .spoiler-block{
-                display: none;
-            }
-
-            .spoiler-control:checked ~ .spoiler-content {
-                display: block;
-            }
-
-
-            .spoiler-block {
-                cursor: pointer;
-                background:#6aeeb5;
-                color: white;
-                padding: 8px 12px;
-                border-radius: 6px;
-                display: inline-block;
-                margin: 10px 0;
-                user-select: none;
-            }
-            
-            .spoiler-block:hover {
-                background: #29e6a7;
-            }
-
-        </style>
+        <link rel="stylesheet" href="/static/feedStyle.css">
     </head>
     <body>
+
+        <!--Navigation Bar-->
         <navbar>
             <ul class ="nav-list">
                 <li class ="nav-item">
@@ -70,10 +38,13 @@
             </ul>
         </navbar>
 
+        <!-- Feed Section -->
         <div class="feed-container">
             <div class="feed-box">
                 <h2>My Feed</h2>
             </div>
+
+            <!--Posts-->
             {% if posts %}
                 {% for post in posts %}
                     {% if post.spoiler %}
@@ -221,6 +192,8 @@
             <p>No posts to display</p>
             {% endif %}
         </div>
+
+        <!-- Create Post Button -->
         <a href="/create_post"><button class="create-button">Create Post</button></a>
     </body>
 </html>
