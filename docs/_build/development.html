@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Development Guide &#8212; TV-Show-Webapp 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api-reference.html" />
+    <link rel="prev" title="Troubleshooting Guide" href="troubleshooting.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="development-guide">
+<h1>Development Guide<a class="headerlink" href="#development-guide" title="Link to this heading">¶</a></h1>
+<section id="project-structure">
+<h2>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>TV-Show-Webapp/
+├── app.py                    # Main Flask application
+├── requirements.txt          # Python dependencies
+├── Dockerfile               # Container configuration
+├── docker-compose.yml       # Multi-container setup
+├── .env                     # Environment variables (create this)
+│
+├── db/                      # Database layer
+│   ├── server.py           # Database connection
+│   ├── query.py            # Database queries
+│   └── schema/             # SQLAlchemy models
+│       ├── __init__.py
+│       ├── user.py
+│       ├── post.py
+│       └── ...
+│
+├── static/                  # Static files (CSS, images)
+│   ├── images/
+│   └── *.css files
+│
+├── templates/               # HTML templates
+│   ├── index.html
+│   ├── login.html
+│   └── ...
+│
+├── docs/                    # Documentation (you are here!)
+│   ├── conf.py
+│   ├── index.rst
+│   └── *.rst files
+│
+└── logs/                    # Application logs
+</pre></div>
+</div>
+</section>
+<section id="setting-up-development-environment">
+<h2>Setting Up Development Environment<a class="headerlink" href="#setting-up-development-environment" title="Link to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Clone the repository</p></li>
+<li><p>Set up virtual environment</p></li>
+<li><p>Install development dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span>pytest-flask<span class="w">  </span><span class="c1"># For testing</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="database-schema">
+<h2>Database Schema<a class="headerlink" href="#database-schema" title="Link to this heading">¶</a></h2>
+<p>The application uses PostgreSQL with SQLAlchemy ORM. Key tables:</p>
+<ul class="simple">
+<li><p><strong>User</strong>: User accounts and profiles</p></li>
+<li><p><strong>Post</strong>: User-created posts about media</p></li>
+<li><p><strong>Comment</strong>: Comments on posts</p></li>
+<li><p><strong>TVMovie</strong>: Media information (TV shows and movies)</p></li>
+<li><p><strong>Follows</strong>: User follow relationships</p></li>
+<li><p><strong>Watched/Watching/Watchlist</strong>: User-media relationships</p></li>
+</ul>
+</section>
+<section id="running-in-development-mode">
+<h2>Running in Development Mode<a class="headerlink" href="#running-in-development-mode" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set Flask to development mode</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">FLASK_ENV</span><span class="o">=</span>development<span class="w">  </span><span class="c1"># Mac/Linux</span>
+<span class="nb">set</span><span class="w"> </span><span class="nv">FLASK_ENV</span><span class="o">=</span>development<span class="w">     </span><span class="c1"># Windows</span>
+
+<span class="c1"># Run with debug mode</span>
+python<span class="w"> </span>app.py
+
+<span class="c1"># Or use Flask CLI</span>
+flask<span class="w"> </span>run<span class="w"> </span>--debug
+</pre></div>
+</div>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
+<p>The application includes logging but no formal tests. To add tests:</p>
+<ol class="arabic simple">
+<li><p>Create a <cite>tests/</cite> directory</p></li>
+<li><p>Write tests using pytest</p></li>
+<li><p>Run tests with: <cite>pytest tests/</cite></p></li>
+</ol>
+</section>
+<section id="code-style-guidelines">
+<h2>Code Style Guidelines<a class="headerlink" href="#code-style-guidelines" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Follow PEP 8 for Python code</p></li>
+<li><p>Use meaningful variable and function names</p></li>
+<li><p>Add docstrings to all functions and classes</p></li>
+<li><p>Keep functions focused on single responsibilities</p></li>
+</ul>
+</section>
+<section id="common-development-tasks">
+<h2>Common Development Tasks<a class="headerlink" href="#common-development-tasks" title="Link to this heading">¶</a></h2>
+<p><strong>Adding a New Feature:</strong></p>
+<ol class="arabic simple">
+<li><p>Create database models in <cite>db/schema/</cite></p></li>
+<li><p>Add queries in <cite>db/query.py</cite></p></li>
+<li><p>Create routes in <cite>app.py</cite></p></li>
+<li><p>Add templates in <cite>templates/</cite></p></li>
+<li><p>Style with CSS in <cite>static/</cite></p></li>
+</ol>
+<p><strong>Debugging Tips:</strong></p>
+<ul class="simple">
+<li><p>Check <cite>logs/log.txt</cite> for errors</p></li>
+<li><p>Use Flask’s debugger (when FLASK_ENV=development)</p></li>
+<li><p>Test database queries directly using Python shell</p></li>
+</ul>
+</section>
+<section id="future-improvements">
+<h2>Future Improvements<a class="headerlink" href="#future-improvements" title="Link to this heading">¶</a></h2>
+<p>Potential enhancements for the project:</p>
+<ol class="arabic simple">
+<li><p>Add user profile pictures</p></li>
+<li><p>Implement likes/reactions on posts</p></li>
+<li><p>Add notifications system</p></li>
+<li><p>Create mobile-responsive design</p></li>
+<li><p>Add email verification</p></li>
+<li><p>Implement password reset functionality</p></li>
+</ol>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">TV-Show-Webapp</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Using Streamline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#project-structure">Project Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-development-environment">Setting Up Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#database-schema">Database Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-in-development-mode">Running in Development Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-style-guidelines">Code Style Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-development-tasks">Common Development Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#future-improvements">Future Improvements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api-reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database-schema.html">Database Schema</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="troubleshooting.html" title="previous chapter">Troubleshooting Guide</a></li>
+      <li>Next: <a href="api-reference.html" title="next chapter">API Reference</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ethan Perez.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/development.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
