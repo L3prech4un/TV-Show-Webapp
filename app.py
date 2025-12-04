@@ -60,7 +60,11 @@ def create_app():
     def index():
         """Home page"""
         logger.info("User has accessed home page")
-        return render_template('index.html')
+        user = checkUserLogin()
+        if not user:
+            return render_template('index.html')
+        else:
+            return render_template('index.html', userid=user.UserID)
     
     @app.route('/signup', methods=['GET', 'POST'])
     def register():
@@ -76,13 +80,13 @@ def create_app():
                 password = request.form['PWord'].strip()
 
                 # validate first name
-                if not firstName.isalpha() and len(firstName) >= 2:
+                if not firstName.isalpha() or len(firstName) < 2:
                     error = "First name can only contain letters and must be at least two characters."
                     logger.warning(f"Invalid first name attempt: {firstName}")
                     return render_template('signup.html', error=error)
                 
                 # validate last name
-                if not lastName.isalpha() and len(lastName) >= 2:
+                if not lastName.isalpha() or len(lastName) < 2:
                     error = "Last name can only contain letters and must be at least two characters."
                     logger.warning(f"Invalid last name attempt: {lastName}")
                     return render_template('signup.html', error=error)
@@ -192,7 +196,7 @@ def create_app():
             watchlist = query.getTitles(userid, "watchlist", "watchlist_title")
             
             tvmovies = query.get_all(schema.TVMovie)
-            return render_template('my_profile.html', tvmovies=tvmovies, username=username, watched=watched, watching=watching, watchlist=watchlist)
+            return render_template('my_profile.html', userid=userid, tvmovies=tvmovies, username=username, watched=watched, watching=watching, watchlist=watchlist)
         except Exception as e:
             logger.warning(f"Error loading profile page: {e}")
 
@@ -200,7 +204,11 @@ def create_app():
     def about():
         """About page: Displays the about us section of the website"""
         logger.info("User has accessed about page")
-        return render_template('about.html')
+        user = checkUserLogin()
+        if not user:
+            return render_template('about.html', userid=None)
+        else:
+            return render_template('about.html', userid=user.UserID)
     
     @app.route('/my_feed', methods=['GET', 'POST'])
     def my_feed():
@@ -216,18 +224,23 @@ def create_app():
                 postid = request.form.get('postid')
                 content = request.form.get('content')
                 if postid and content:
-                    query.addComment(user.UserID, postid, content)
-                    logger.info(f"Comment created on Post: {postid}")
+                    if len(content) > 100:
+                        logger.warning("Comment length too long")
+                    else:
+                        query.addComment(user.UserID, postid, content)
+                        logger.info(f"Comment created on Post: {postid}")
                 
                 deletepostid = request.form.get('deletepostid')
                 if deletepostid:
                     query.deletePost(deletepostid)
                     logger.info(f"Post has been Deleted: {deletepostid}")
-            posts = query.getFeed(user.UserID)
-            return render_template('feed.html', posts=posts, getPostComments=query.getPostComments)
+                return redirect(url_for('my_feed'))
+            userid = user.UserID
+            posts = query.getFeed(userid)
+            return render_template('feed.html', userid=userid, posts=posts, getPostComments=query.getPostComments )
         except Exception as e:
             logger.warning(f"Error Getting Feed Page: {e}")
-            return render_template('feed.html', posts=[])
+            return render_template('feed.html', userid=userid, posts=[])
     
     @app.route('/create_post', methods=['GET', 'POST'])
     def create_post():
@@ -237,14 +250,18 @@ def create_app():
         if not user:
             logger.info("No User is logged in")
             return redirect(url_for('login'))
-        
+        userid = user.UserID
         if request.method == 'POST':
-            userid = user.UserID
             title = request.form.get('title')
+            rating = request.form.get('rating')
             content = request.form.get('content')
+            if len(content) > 250:
+                logger.warning("Content on post is too long")
+                return redirect('/create_post')
             mediaid = request.form.get('mediaid')
+            spoiler = request.form.get('spoiler') == 'on'
             try:
-                query.createPost(userid,mediaid,title,content)
+                query.createPost(userid,mediaid,title,content,spoiler,rating)
                 logger.info("User has succesfully created a post")
                 return redirect(url_for('my_feed'))
             except Exception as e:
@@ -252,7 +269,7 @@ def create_app():
                 return redirect('/create_post')
 
         tvmovies = query.get_all(schema.TVMovie)
-        return render_template('createpost.html', tvmovies=tvmovies)
+        return render_template('createpost.html', userid=userid, tvmovies=tvmovies)
     
     @app.route('/discover')
     def discover():
@@ -267,7 +284,7 @@ def create_app():
         following = query.get_following(user.UserID)
         followers = query.get_followers(user.UserID)
         
-        return render_template('discover.html', 
+        return render_template('discover.html', userid=user.UserID, 
                              suggested_users=suggested_users,
                              following=following,
                              followers=followers)
@@ -471,9 +488,134 @@ def create_app():
     def trigger_error():
         raise RuntimeError('This is a test error for the error page')
 
+    @app.route('/search_users', methods=['GET', 'POST'])
+    def search_users():
+        """Search for users page"""
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No user logged in for search")
+            return redirect(url_for('login'))
+    
+        search_results = []
+        search_term = ""
+    
+        if request.method == 'POST':
+            search_term = request.form.get('search_term', '').strip()
+            if search_term:
+                try:
+                    #use the new search function
+                    search_results = query.search_users(search_term, user.UserID)
+                    logger.info(f"User searched for: {search_term}, found {len(search_results)} results")
+                except Exception as e:
+                    logger.error(f"Search error: {e}")
+                    search_results = []
+    
+        return render_template('search_users.html', 
+                     search_results=search_results, 
+                     search_term=search_term,
+                     logged_in_user=user,  
+                     get_followers=query.get_followers,
+                     get_following=query.get_following,
+                     is_following=query.is_following)
+    
+    @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+    def delete_comment(comment_id):
+        """Delete a comment from a post"""
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No User is Logged in")
+            return redirect(url_for('login'))
+
+        try:
+            success = query.deleteComment(comment_id, user.UserID)
+            if success:
+                logger.info(f"Comment {comment_id} deleted successfully by user {user.UserID}")
+            else:
+                logger.warning(f"User {user.UserID} failed to delete comment {comment_id}")
+        except Exception as e:
+            logger.error(f"Error deleting comment {comment_id}: {e}")
+
+        return redirect(request.referrer or url_for('my_feed'))
+    
+    @app.route('/profile/<int:user_id>')
+    def other_user_profile(user_id):
+        """Other User Profile page: displays the another Users profile page based on the user_id"""
+        logger.info("User has accessed profile page")
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No User logged in")
+            return redirect(url_for('login'))
+        
+        try:
+            otheruserid = user_id
+            otheruser = query.get_User(schema.User, UserID=otheruserid)
+            username = otheruser.UName
+            watched = query.getTitles(otheruserid, "watched", "watched_title")
+            watching = query.getTitles(otheruserid, "watching", "watching_title")
+            watchlist = query.getTitles(otheruserid, "watchlist", "watchlist_title")
+            following = query.checkFollowing(user.UserID,otheruserid)
+            tvmovies = query.get_all(schema.TVMovie)
+            return render_template('other_user_profile.html', userid=user.UserID, following=following, otheruserid=otheruserid, tvmovies=tvmovies, username=username, watched=watched, watching=watching, watchlist=watchlist)
+        except Exception as e:
+            logger.warning(f"Error loading profile page: {e}")
+            return render_template('other_user_profile.html', userid=user.UserID, following=following, otheruserid=otheruserid, tvmovies=[], username="Unknown", watched=[], watching=[], watchlist=[])
+
+    @app.route('/media/<int:media_id>',  methods=['GET', 'POST'])
+    def media_page(media_id):
+        """Media Page: displays any given media based on the media_id"""
+        logger.info("User has accessed media page")
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No User logged in")
+            return redirect(url_for('login'))
+        try:
+            media = query.getMediaInfo(media_id)
+            posts = query.getMediaPosts(media_id)
+            if posts:
+                averagerating = int(sum(post["rating"] for post in posts)/ len(posts) )
+            else:
+                averagerating = 0
+
+            if request.method == 'POST':
+                postid = request.form.get('postid')
+                content = request.form.get('content')
+                if postid and content:
+                    query.addComment(user.UserID, postid, content)
+                    logger.info(f"Comment created on Post: {postid}")
+
+                deletepostid = request.form.get('deletepostid')
+                if deletepostid:
+                    query.deletePost(deletepostid)
+                    logger.info(f"Post has been Deleted: {deletepostid}")
+                return redirect(url_for('media_page', media_id = media_id))
+
+            return render_template('media_page.html', userid=user.UserID, averagerating=averagerating, media=media, posts=posts, getPostComments=query.getPostComments)
+        except Exception as e:
+            logger.warning(f"Error loading media page: {e}")
+            return render_template('media_page.html)')
+    
+    @app.route('/logout', methods=['GET','POST'])
+    def logout():
+        """Allows a user to logout"""
+        logger.info("User has logged out")
+        
+        try:
+            loggedinuser = request.cookies.get('userloggedin')
+
+            if loggedinuser in userCache:
+                del userCache[loggedinuser]
+        
+            response = redirect(url_for('index'))
+            response.delete_cookie('userloggedin')
+
+            return response 
+        except Exception as e:
+            logger.warning(f"Error logging user out: {e}")
+            return redirect(url_for('index'))
+        
     return app
     
 if __name__ == "__main__":
     app = create_app()
     # debug refreshes your application with your new changes every time you save
-    app.run(debug=True, host='0.0.0.0') # host='0.0.0.0' allows externl connections (req'd for docker)
+    app.run(debug=True, host='0.0.0.0') # host='0.0.0.0' allows external connections (req'd for docker)

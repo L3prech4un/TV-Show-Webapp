@@ -1,5 +1,5 @@
 """post.py: create a table named post in the TV-SHOW-WEBAPP database"""
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from db.server import Base
 from db.schema.creates import Creates
@@ -12,7 +12,9 @@ class Post(Base):
     # 40 = max length of string
     Title = Column(String(40))
     Date = Column(String(40))
-    Content = Column(String(40))
+    Content = Column(String(250))
+    Spoiler = Column(Boolean)
+    Rating = Column(Integer)
 
     # create relationship with user table. assoc table name = Creates
     User = relationship('User', secondary = Creates, back_populates = 'Post')

@@ -63,58 +63,185 @@ body {
     height: auto;
 }
 
+/*Create Post Button Styling*/
+.create-button {
 
-/* 
-/* signup Container Styling */
-.signup-container {
-    background-color: white;
-    padding: 1rem;
+    background-color: var(--clr-primary);
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 10px 20px;
     border-radius: var(--radius);
-    box-shadow: 0px 0px 10px var(--clr-gray200);
-    max-width: 400px;
-    margin: 5rem auto;
+    cursor: pointer;
+    font-weight: bold;
+    
+}
+
+.feed-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.feed-box h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: black;
     text-align: center;
 }
 
-.signup-container h2 {
-    border-bottom-style: solid;
-    padding-bottom: 0.5rem;
-    border-color: var(--clr-primary)
-}
-
-.signup-container form {
+.post-box {
+    background-color: white;
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius);
+    box-shadow: 0px 0px 8px var(--clr-gray200);
     display: flex;
     flex-direction: column;
-    margin-top: 20px
+    gap: 1rem;
+    
 }
 
-.signup-container input {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--clr-gray200);
+.post-box h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+.post-box > div {
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-box p {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+    color: #090909;
+}
+
+/* Comments Section */
+.comments {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--clr-gray200);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.comment {
+    background-color: var(--clr-gray100);
+    padding: 0.6rem 1rem;
     border-radius: var(--radius);
-    font-size: 1rem;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.signup-container input:focus {
-    outline: 2px solid var(--clr-primary-hover);
+.comment p {
+    margin: 0;
 }
 
-input[type="submit"] {
-    font-size: 1rem;
-    font-weight: bold;
-    background: var(--clr-primary);
+/* Delete Comment Button */
+.delete-comment-btn {
+    background: #ff6b6b;
+    color: white;
     border: none;
-    outline: none;
+    padding: 4px 8px;
     border-radius: var(--radius);
-    padding: 0.5rem 1rem;
     cursor: pointer;
-    max-width: fit-content;
-    justify-content: center;
-    margin: 0px auto;
+    font-size: 0.75rem;
 }
 
-input[type="submit"]:hover {
-    background: var(--clr-primary-hover);
-    transition: background 0.3s ease;
+.delete-comment-btn:hover {
+    background: #ff4c4c;
 }
+
+/* Add Comment Button */
+.comments form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* spacing between input and button */
+    margin-top: 0.5rem;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.make-comment {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--clr-gray200);
+    font-size: 0.9rem;
+    width: 100%
+}
+
+.comment-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    background-color: var(--clr-primary);
+    color: black;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.comment-button:hover {
+    background-color: var(--clr-primary-hover);
+}
+
+/* Create Post Button in Box */
+.create-button {
+    display: block;
+    margin: 2rem auto;
+    font-size: 1rem;
+}
+
+/*Delete Post Button*/
+.delete-post-btn {
+    background-color: #ff6b6b;  /* Red for delete */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* Spoiler Styling */
+.spoiler-content {
+    display: none;
+}
+
+.spoiler-control {
+    display: none;
+}
+
+.spoiler-control:checked ~ .spoiler-block{
+    display: none;
+}
+
+.spoiler-control:checked ~ .spoiler-content {
+    display: block;
+}
+
+.spoiler-block {
+    cursor: pointer;
+    background:#6aeeb5;
+    color: rgb(2, 1, 1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 10px 0;
+    user-select: none;
+}
+            
+.spoiler-block:hover {
+    background: var(--clr-primary-hover);
+}
+

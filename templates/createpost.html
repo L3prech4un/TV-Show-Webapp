@@ -2,30 +2,71 @@
 <html>
     <head>
         <title>Create Post - Streamline</title>
-        <link rel="stylesheet" href="/static/signupStyle.css">
+        <link rel="stylesheet" href="/static/createpostStyle.css">
     </head>
     <body>
+        <!--Navigation Bar to return to feed-->
         <navbar>
             <ul class ="nav-list">
-            <li class ="nav-item">
-                <a href="/my_feed">Return To Feed</a>
-            </li>
+                <li class ="nav-item">
+                <a href="/">
+                    <img src = "/static/images/Logo.png" alt="Logo Image" class="MiniLogo">
+                </a>
+                </li>
+                <li class ="nav-item">
+                <a href="/discover">Discover</a>
+                </li>
+                <li class="nav-item">
+                <a href="/search_users"></a>
+                </li>
+                <li class ="nav-item">
+                <a href="/my_feed">My Feed</a>
+                </li>
+                <li class ="nav-item"> 
+                <a href="/my_profile">My Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about">About</a>
+                </li>
+                {% if not userid %}
+                <li class ="nav-item">
+                    <a href="/login">Login</a>
+                </li>
+                <li class ="nav-item">
+                    <a href="/signup">Sign Up</a>
+                </li>
+                {% else %}
+                <li class ="nav-item">
+                    <a href="/logout">Logout</a>
+                </li>
+                {% endif %}
             </ul>
         </navbar>
 
+        <!-- Create Post Section -->
         <div>
             <h2>Create A New Post</h2>
-            <form method="POST">
+            <form method="POST"> 
                 <select name="mediaid">
                     <option value="">Select Your Media</option>
                     {% for media in tvmovies %}
                     <option value="{{media.MediaID}}">{{ media.Title }}</option>
                     {% endfor %}
                 </select>
-                <input type="text" name="title" placeholder="Title Goes Here" required>
-                <textarea name="content" placeholder="What do you want to say?" required></textarea>
+                <div class="spoiler-row">
+                    <label for="spoiler">Is it a spoiler?</label>
+                    <input type="checkbox" name="spoiler" id="spoiler">
+                </div>
+                <select name="rating">
+                    <option value="">How would you rate it?</option>
+                    <option value="1">480p </option>
+                    <option value="2">720p</option>
+                    <option value="3">1080p</option>
+                    <option value="4">4K</option>
+                </select>
                 <button type="submit">Create Post</button>
             </form>
         </div>
+
     </body>
 </html>
