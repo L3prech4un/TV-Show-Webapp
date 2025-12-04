@@ -449,6 +449,36 @@ def create_app():
         loggedinuser = request.cookies.get('userloggedin')
         return userCache.get(loggedinuser)
     
+    @app.route('/search_users', methods=['GET', 'POST'])
+    def search_users():
+        """Search for users page"""
+        user = checkUserLogin()
+        if not user:
+            logger.warning("No user logged in for search")
+            return redirect(url_for('login'))
+    
+        search_results = []
+        search_term = ""
+    
+        if request.method == 'POST':
+            search_term = request.form.get('search_term', '').strip()
+            if search_term:
+                try:
+                    #use the new search function
+                    search_results = query.search_users(search_term, user.UserID)
+                    logger.info(f"User searched for: {search_term}, found {len(search_results)} results")
+                except Exception as e:
+                    logger.error(f"Search error: {e}")
+                    search_results = []
+    
+        return render_template('search_users.html', 
+                     search_results=search_results, 
+                     search_term=search_term,
+                     logged_in_user=user,  
+                     get_followers=query.get_followers,
+                     get_following=query.get_following,
+                     is_following=query.is_following)
+    
     @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
     def delete_comment(comment_id):
         """Delete a comment from a post"""
@@ -544,35 +574,6 @@ def create_app():
             logger.warning(f"Error logging user out: {e}")
             return redirect(url_for('index'))
         
-    @app.route('/search_users', methods=['GET', 'POST'])
-    def search_users():
-        """Search for users page"""
-        user = checkUserLogin()
-        if not user:
-            logger.warning("No user logged in for search")
-            return redirect(url_for('login'))
-    
-        search_results = []
-        search_term = ""
-    
-        if request.method == 'POST':
-            search_term = request.form.get('search_term', '').strip()
-            if search_term:
-                try:
-                    #use the new search function
-                    search_results = query.search_users(search_term, user.UserID)
-                    logger.info(f"User searched for: {search_term}, found {len(search_results)} results")
-                except Exception as e:
-                    logger.error(f"Search error: {e}")
-                    search_results = []
-    
-        return render_template('search_users.html', 
-                     search_results=search_results, 
-                     search_term=search_term,
-                     logged_in_user=user,  
-                     get_followers=query.get_followers,
-                     get_following=query.get_following,
-                     is_following=query.is_following)
     return app
     
 if __name__ == "__main__":
