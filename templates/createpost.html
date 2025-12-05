@@ -17,7 +17,7 @@
                 <a href="/discover">Discover</a>
                 </li>
                 <li class="nav-item">
-                <a href="/search_users"></a>
+                <a href="/search_users">Search Users</a>
                 </li>
                 <li class ="nav-item">
                 <a href="/my_feed">My Feed</a>
@@ -57,6 +57,8 @@
                     <label for="spoiler">Is it a spoiler?</label>
                     <input type="checkbox" name="spoiler" id="spoiler">
                 </div>
+                <input type="text" name="title" placeholder="Title Goes Here" required maxlength="40" pattern="^[a-zA-Z0-9_ ]+$">
+                <textarea name="content" placeholder="What do you want to say?" required maxlength="250" pattern="^[a-zA-Z0-9_ ]+$"></textarea>
                 <select name="rating">
                     <option value="">How would you rate it?</option>
                     <option value="1">480p </option>
