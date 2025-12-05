@@ -47,3 +47,22 @@ def test_remove_from_watched_page(client):
     """Test the removed_from_watched page"""
     response = client.post('/remove_from_watched', data={'title': 'Some Title'}, follow_redirects=True)
     assert response.status_code == 200
+
+def test_valid_registration(client):
+    """Test signup"""
+    response = client.post('/signup', data={
+        'FirstName': 'John',
+        'LastName': 'Doe',
+        'Email': 'test@test.com',
+        'PhoneNumber': '1234567890',
+        'Password': 'password123'
+    }, follow_redirects=True)
+    assert response.status_code == 200
+
+def test_valid_login(client):
+    """Test login"""
+    response = client.post('/login', data={
+        'Email': 'test@test.com',
+        'Password': 'password123'
+    }, follow_redirects=True)
+    assert response.status_code == 200
